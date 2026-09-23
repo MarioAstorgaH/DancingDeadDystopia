@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dh0av78mdfm51"
-path="res://.godot/imported/zombie_frame_1.png-2d2d3c4fba8a7cf28325b4bdc060fefe.ctex"
+uid="uid://bth5qfgmobjmo"
+path="res://.godot/imported/brain_button_green_pressed.png-4d10231ff2a26a05c1663436e95d7878.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/zombie_frame_1.png"
-dest_files=["res://.godot/imported/zombie_frame_1.png-2d2d3c4fba8a7cf28325b4bdc060fefe.ctex"]
+source_file="res://Assets/Images/Buttons/brain_button_green_pressed.png"
+dest_files=["res://.godot/imported/brain_button_green_pressed.png-4d10231ff2a26a05c1663436e95d7878.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6amwul4vjcrw"
-path="res://.godot/imported/brain_button_yellow_pressed.png-c6316c9db7769338ddbe75eac8af7c66.ctex"
+path="res://.godot/imported/brain_button_yellow_pressed.png-fd954cc8c3eb53ecddf7bd396182e756.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/brain_button_yellow_pressed.png"
-dest_files=["res://.godot/imported/brain_button_yellow_pressed.png-c6316c9db7769338ddbe75eac8af7c66.ctex"]
+source_file="res://Assets/Images/Buttons/brain_button_yellow_pressed.png"
+dest_files=["res://.godot/imported/brain_button_yellow_pressed.png-fd954cc8c3eb53ecddf7bd396182e756.ctex"]
 
 [params]
 

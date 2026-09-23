@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bth5qfgmobjmo"
-path="res://.godot/imported/brain_button_green_pressed.png-ab72e9ed8affd5f8c6de4844fb631cfc.ctex"
+uid="uid://b8yu7uwaf8x6k"
+path="res://.godot/imported/brain_button_red.png-f624e58a15cb0d5280fa7592b7d13964.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/brain_button_green_pressed.png"
-dest_files=["res://.godot/imported/brain_button_green_pressed.png-ab72e9ed8affd5f8c6de4844fb631cfc.ctex"]
+source_file="res://Assets/Images/Buttons/brain_button_red.png"
+dest_files=["res://.godot/imported/brain_button_red.png-f624e58a15cb0d5280fa7592b7d13964.ctex"]
 
 [params]
 
