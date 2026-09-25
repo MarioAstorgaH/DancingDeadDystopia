@@ -1,30 +1,16 @@
 [gd_scene format=3 uid="uid://bobcn0qs6glx3"]
 
 [ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="1_t0blr"]
+[ext_resource type="Script" uid="uid://lxqbncdhpc10" path="res://play_button.gd" id="2_ce3u6"]
+[ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="2_wit27"]
+[ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="3_0owis"]
+[ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="4_klckv"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_yt575"]
 font = ExtResource("1_t0blr")
 font_size = 50
 outline_size = 1
 outline_color = Color(0, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_laoy2"]
-content_margin_left = 20.0
-content_margin_top = 40.0
-content_margin_right = 20.0
-bg_color = Color(0.18039216, 0.18039216, 0.18039216, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7nthl"]
-content_margin_left = 20.0
-content_margin_top = 45.0
-content_margin_right = 20.0
-bg_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v6kfj"]
-content_margin_left = 20.0
-content_margin_top = 40.0
-content_margin_right = 20.0
-bg_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=86959974]
 
@@ -87,10 +73,12 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("1_t0blr")
 theme_override_font_sizes/font_size = 50
-theme_override_styles/normal = SubResource("StyleBoxFlat_laoy2")
-action_mode = 0
+theme_override_styles/normal = ExtResource("2_wit27")
+theme_override_styles/pressed = ExtResource("3_0owis")
+theme_override_styles/hover = ExtResource("4_klckv")
 text = "JUGAR"
 language = "es_MX"
+script = ExtResource("2_ce3u6")
 
 [node name="config_button" type="Button" parent="Control/main_margin/mainmenu_container/button_container" unique_id=793509096]
 custom_minimum_size = Vector2(400, 120)
@@ -98,7 +86,9 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("1_t0blr")
 theme_override_font_sizes/font_size = 50
-theme_override_styles/normal = SubResource("StyleBoxFlat_7nthl")
+theme_override_styles/normal = ExtResource("2_wit27")
+theme_override_styles/pressed = ExtResource("3_0owis")
+theme_override_styles/hover = ExtResource("4_klckv")
 text = "CONFIGURACION"
 language = "es_MX"
 
@@ -109,6 +99,10 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("1_t0blr")
 theme_override_font_sizes/font_size = 50
-theme_override_styles/normal = SubResource("StyleBoxFlat_v6kfj")
+theme_override_styles/normal = ExtResource("2_wit27")
+theme_override_styles/pressed = ExtResource("3_0owis")
+theme_override_styles/hover = ExtResource("4_klckv")
 text = "SALIR"
 language = "es"
+
+[connection signal="pressed" from="Control/main_margin/mainmenu_container/button_container/play_button" to="Control/main_margin/mainmenu_container/button_container/play_button" method="_on_pressed"]

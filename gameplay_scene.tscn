@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bngmcqe5apkxt"]
+
+[ext_resource type="Texture2D" uid="uid://bqtmhalx7rt8v" path="res://Assets/Images/Buttons/brain_button_blue.png" id="1_2ca1c"]
+[ext_resource type="Texture2D" uid="uid://0xa14g1wprhc" path="res://Assets/Images/Buttons/brain_button_blue_pressed.png" id="2_af7yb"]
+
+[node name="Node2D" type="Node2D" unique_id=1465382250]
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="." unique_id=781625252]
+position = Vector2(7, 1520)
+texture_normal = ExtResource("1_2ca1c")
+texture_pressed = ExtResource("2_af7yb")
