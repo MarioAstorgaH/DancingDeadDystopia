@@ -1,5 +1,31 @@
 [gd_scene format=3 uid="uid://bobcn0qs6glx3"]
 
+[ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="1_t0blr"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_yt575"]
+font = ExtResource("1_t0blr")
+font_size = 50
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_laoy2"]
+content_margin_left = 20.0
+content_margin_top = 40.0
+content_margin_right = 20.0
+bg_color = Color(0.18039216, 0.18039216, 0.18039216, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7nthl"]
+content_margin_left = 20.0
+content_margin_top = 45.0
+content_margin_right = 20.0
+bg_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v6kfj"]
+content_margin_left = 20.0
+content_margin_top = 40.0
+content_margin_right = 20.0
+bg_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
+
 [node name="CanvasLayer" type="CanvasLayer" unique_id=86959974]
 
 [node name="Control" type="Control" parent="." unique_id=1412907007]
@@ -10,7 +36,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TextureRect" type="TextureRect" parent="Control" unique_id=603737432]
+[node name="main_screen" type="TextureRect" parent="Control" unique_id=603737432]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,7 +46,7 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="Control" unique_id=308519486]
+[node name="main_margin" type="MarginContainer" parent="Control" unique_id=308519486]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,13 +58,57 @@ theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer" unique_id=130859208]
+[node name="mainmenu_container" type="VBoxContainer" parent="Control/main_margin" unique_id=130859208]
 layout_mode = 2
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="Control/MarginContainer/VBoxContainer" unique_id=1975978736]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="Control/main_margin/mainmenu_container" unique_id=1975978736]
 layout_mode = 2
-ratio = 2.0
 
-[node name="TextEdit" type="TextEdit" parent="Control/MarginContainer/VBoxContainer/AspectRatioContainer" unique_id=2005002570]
+[node name="Title" type="Label" parent="Control/main_margin/mainmenu_container/AspectRatioContainer" unique_id=526714723]
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
-placeholder_text = "Dancing Dead Dystopia"
+text = "DANCING DEAD DYSTOPIA"
+label_settings = SubResource("LabelSettings_yt575")
+vertical_alignment = 2
+
+[node name="mainmenu_Spacing1" type="Control" parent="Control/main_margin/mainmenu_container" unique_id=79336420]
+custom_minimum_size = Vector2(0, 400)
+layout_mode = 2
+
+[node name="button_container" type="VBoxContainer" parent="Control/main_margin/mainmenu_container" unique_id=239353575]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 120
+
+[node name="play_button" type="Button" parent="Control/main_margin/mainmenu_container/button_container" unique_id=1312405209]
+custom_minimum_size = Vector2(400, 120)
+custom_maximum_size = Vector2(450, -1)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("1_t0blr")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_laoy2")
+action_mode = 0
+text = "JUGAR"
+language = "es_MX"
+
+[node name="config_button" type="Button" parent="Control/main_margin/mainmenu_container/button_container" unique_id=793509096]
+custom_minimum_size = Vector2(400, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("1_t0blr")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_7nthl")
+text = "CONFIGURACION"
+language = "es_MX"
+
+[node name="exit_button" type="Button" parent="Control/main_margin/mainmenu_container/button_container" unique_id=2101775047]
+custom_minimum_size = Vector2(400, 120)
+custom_maximum_size = Vector2(450, -1)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("1_t0blr")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_v6kfj")
+text = "SALIR"
+language = "es"
