@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bobcn0qs6glx3"]
 
 [ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="1_t0blr"]
-[ext_resource type="Script" uid="uid://lxqbncdhpc10" path="res://play_button.gd" id="2_ce3u6"]
+[ext_resource type="Script" uid="uid://bdw0et88qc7wu" path="res://menu_buttons.gd" id="2_ce3u6"]
 [ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="2_wit27"]
 [ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="3_0owis"]
 [ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="4_klckv"]
@@ -65,6 +65,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 120
+script = ExtResource("2_ce3u6")
 
 [node name="play_button" type="Button" parent="Control/main_margin/mainmenu_container/button_container" unique_id=1312405209]
 custom_minimum_size = Vector2(400, 120)
@@ -78,10 +79,10 @@ theme_override_styles/pressed = ExtResource("3_0owis")
 theme_override_styles/hover = ExtResource("4_klckv")
 text = "JUGAR"
 language = "es_MX"
-script = ExtResource("2_ce3u6")
 
 [node name="config_button" type="Button" parent="Control/main_margin/mainmenu_container/button_container" unique_id=793509096]
 custom_minimum_size = Vector2(400, 120)
+custom_maximum_size = Vector2(500, -1)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("1_t0blr")
@@ -89,6 +90,8 @@ theme_override_font_sizes/font_size = 50
 theme_override_styles/normal = ExtResource("2_wit27")
 theme_override_styles/pressed = ExtResource("3_0owis")
 theme_override_styles/hover = ExtResource("4_klckv")
+theme_override_styles/disabled = ExtResource("2_wit27")
+disabled = true
 text = "CONFIGURACION"
 language = "es_MX"
 
@@ -103,6 +106,7 @@ theme_override_styles/normal = ExtResource("2_wit27")
 theme_override_styles/pressed = ExtResource("3_0owis")
 theme_override_styles/hover = ExtResource("4_klckv")
 text = "SALIR"
-language = "es"
+language = "es_MX"
 
-[connection signal="pressed" from="Control/main_margin/mainmenu_container/button_container/play_button" to="Control/main_margin/mainmenu_container/button_container/play_button" method="_on_pressed"]
+[connection signal="pressed" from="Control/main_margin/mainmenu_container/button_container/play_button" to="Control/main_margin/mainmenu_container/button_container" method="_on_play_button_pressed"]
+[connection signal="pressed" from="Control/main_margin/mainmenu_container/button_container/exit_button" to="Control/main_margin/mainmenu_container/button_container" method="_on_exit_button_pressed"]

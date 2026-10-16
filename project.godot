@@ -10,9 +10,10 @@ config_version=5
 
 [application]
 
-config/name="DeadDancingDistopia"
+config/name="Dancing Dead Dystopia"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
+run/main_scene="uid://bobcn0qs6glx3"
 
 [display]
 
@@ -23,6 +24,10 @@ window/size/window_height_override=640
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=5
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
 
 [physics]
 
