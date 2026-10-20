@@ -1,0 +1,17 @@
+class_name SongInfo
+extends RefCounted
+
+## Datos de una canción, leídos de `Assets/Songs/<id>/song.json`.
+
+var id := ""
+var title := ""
+var artist := ""
+var difficulty := 1
+var duration := 0.0  # segundos, calculado del audio
+var audio_path := ""
+var cover_path := ""  # vacío si la canción no tiene portada
+
+
+func duration_text() -> String:
+	var seconds := int(round(duration))
+	return "%d:%02d" % [seconds / 60, seconds % 60]

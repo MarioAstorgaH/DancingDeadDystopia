@@ -1,0 +1,200 @@
+[gd_scene format=3]
+
+[ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="1_font"]
+[ext_resource type="Script" uid="uid://dfnvkrh2asvxs" path="res://song_select.gd" id="2_select"]
+[ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="3_normal"]
+[ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="4_press"]
+[ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="5_hover"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("1_font")
+font_size = 50
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_small"]
+font = ExtResource("1_font")
+font_size = 30
+font_color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="background" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.14, 0.06, 0.22, 1)
+
+[node name="select_margin" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="select_container" type="VBoxContainer" parent="Control/select_margin"]
+layout_mode = 2
+theme_override_constants/separation = 30
+script = ExtResource("2_select")
+
+[node name="Title" type="Label" parent="Control/select_margin/select_container"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+text = "CANCIONES"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="sort_bar" type="HBoxContainer" parent="Control/select_margin/select_container"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="sort_difficulty" type="Button" parent="Control/select_margin/select_container/sort_bar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/hover = ExtResource("5_hover")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover_pressed = ExtResource("4_press")
+toggle_mode = true
+text = "DIFICULTAD"
+clip_text = true
+language = "es_MX"
+
+[node name="sort_title" type="Button" parent="Control/select_margin/select_container/sort_bar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/hover = ExtResource("5_hover")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover_pressed = ExtResource("4_press")
+toggle_mode = true
+text = "NOMBRE"
+clip_text = true
+language = "es_MX"
+
+[node name="sort_artist" type="Button" parent="Control/select_margin/select_container/sort_bar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/hover = ExtResource("5_hover")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover_pressed = ExtResource("4_press")
+toggle_mode = true
+text = "ARTISTA"
+clip_text = true
+language = "es_MX"
+
+[node name="sort_duration" type="Button" parent="Control/select_margin/select_container/sort_bar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/hover = ExtResource("5_hover")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover_pressed = ExtResource("4_press")
+toggle_mode = true
+text = "DURACION"
+clip_text = true
+language = "es_MX"
+
+[node name="order_label" type="Label" parent="Control/select_margin/select_container"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "MENOR A MAYOR"
+label_settings = SubResource("LabelSettings_small")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="empty_label" type="Label" parent="Control/select_margin/select_container"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "NO HAY CANCIONES"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="song_scroll" type="ScrollContainer" parent="Control/select_margin/select_container"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="song_list" type="VBoxContainer" parent="Control/select_margin/select_container/song_scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="bottom_bar" type="HBoxContainer" parent="Control/select_margin/select_container"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="back_button" type="Button" parent="Control/select_margin/select_container/bottom_bar"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover = ExtResource("5_hover")
+text = "VOLVER"
+language = "es_MX"
+
+[node name="play_button" type="Button" parent="Control/select_margin/select_container/bottom_bar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover = ExtResource("5_hover")
+theme_override_styles/disabled = ExtResource("4_press")
+disabled = true
+text = "JUGAR"
+language = "es_MX"
+
+[connection signal="pressed" from="Control/select_margin/select_container/sort_bar/sort_difficulty" to="Control/select_margin/select_container" method="_on_sort_difficulty_pressed"]
+[connection signal="pressed" from="Control/select_margin/select_container/sort_bar/sort_title" to="Control/select_margin/select_container" method="_on_sort_title_pressed"]
+[connection signal="pressed" from="Control/select_margin/select_container/sort_bar/sort_artist" to="Control/select_margin/select_container" method="_on_sort_artist_pressed"]
+[connection signal="pressed" from="Control/select_margin/select_container/sort_bar/sort_duration" to="Control/select_margin/select_container" method="_on_sort_duration_pressed"]
+[connection signal="pressed" from="Control/select_margin/select_container/bottom_bar/back_button" to="Control/select_margin/select_container" method="_on_back_button_pressed"]
+[connection signal="pressed" from="Control/select_margin/select_container/bottom_bar/play_button" to="Control/select_margin/select_container" method="_on_play_button_pressed"]
