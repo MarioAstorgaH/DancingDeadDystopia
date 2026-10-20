@@ -22,6 +22,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="background" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.14, 0.06, 0.22, 1)
+
 [node name="main_screen" type="TextureRect" parent="Control" unique_id=603737432]
 layout_mode = 1
 anchors_preset = 15
@@ -90,8 +99,6 @@ theme_override_font_sizes/font_size = 50
 theme_override_styles/normal = ExtResource("2_wit27")
 theme_override_styles/pressed = ExtResource("3_0owis")
 theme_override_styles/hover = ExtResource("4_klckv")
-theme_override_styles/disabled = ExtResource("2_wit27")
-disabled = true
 text = "CONFIGURACION"
 language = "es_MX"
 
@@ -109,4 +116,5 @@ text = "SALIR"
 language = "es_MX"
 
 [connection signal="pressed" from="Control/main_margin/mainmenu_container/button_container/play_button" to="Control/main_margin/mainmenu_container/button_container" method="_on_play_button_pressed"]
+[connection signal="pressed" from="Control/main_margin/mainmenu_container/button_container/config_button" to="Control/main_margin/mainmenu_container/button_container" method="_on_config_button_pressed"]
 [connection signal="pressed" from="Control/main_margin/mainmenu_container/button_container/exit_button" to="Control/main_margin/mainmenu_container/button_container" method="_on_exit_button_pressed"]

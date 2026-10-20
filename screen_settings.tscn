@@ -1,0 +1,249 @@
+[gd_scene format=3]
+
+[ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="1_font"]
+[ext_resource type="Script" uid="uid://dckn386imqhyt" path="res://settings_screen.gd" id="2_settings"]
+[ext_resource type="Script" uid="uid://du0ae3d5yp0dj" path="res://volume_row.gd" id="3_row"]
+[ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="4_normal"]
+[ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="5_press"]
+[ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="6_hover"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("1_font")
+font_size = 50
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_section"]
+font = ExtResource("1_font")
+font_size = 45
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_row"]
+font = ExtResource("1_font")
+font_size = 36
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_track"]
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.3, 0.18, 0.42, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.45, 0.75, 0.3, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="background" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.14, 0.06, 0.22, 1)
+
+[node name="settings_margin" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="settings_container" type="VBoxContainer" parent="Control/settings_margin"]
+layout_mode = 2
+theme_override_constants/separation = 60
+script = ExtResource("2_settings")
+
+[node name="Title" type="Label" parent="Control/settings_margin/settings_container"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+text = "CONFIGURACION"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="audio_spacing" type="Control" parent="Control/settings_margin/settings_container"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="audio_label" type="Label" parent="Control/settings_margin/settings_container"]
+layout_mode = 2
+text = "AUDIO"
+label_settings = SubResource("LabelSettings_section")
+
+[node name="master_row" type="VBoxContainer" parent="Control/settings_margin/settings_container"]
+layout_mode = 2
+script = ExtResource("3_row")
+bus_name = "Master"
+
+[node name="name_label" type="Label" parent="Control/settings_margin/settings_container/master_row"]
+layout_mode = 2
+text = "GENERAL"
+label_settings = SubResource("LabelSettings_row")
+
+[node name="controls" type="HBoxContainer" parent="Control/settings_margin/settings_container/master_row"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="slider" type="HSlider" parent="Control/settings_margin/settings_container/master_row/controls"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxFlat_track")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+value = 100.0
+rounded = true
+
+[node name="value_label" type="Label" parent="Control/settings_margin/settings_container/master_row/controls"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "100"
+label_settings = SubResource("LabelSettings_row")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="menu_music_row" type="VBoxContainer" parent="Control/settings_margin/settings_container"]
+layout_mode = 2
+script = ExtResource("3_row")
+bus_name = "MenuMusic"
+
+[node name="name_label" type="Label" parent="Control/settings_margin/settings_container/menu_music_row"]
+layout_mode = 2
+text = "MUSICA DEL MENU"
+label_settings = SubResource("LabelSettings_row")
+
+[node name="controls" type="HBoxContainer" parent="Control/settings_margin/settings_container/menu_music_row"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="slider" type="HSlider" parent="Control/settings_margin/settings_container/menu_music_row/controls"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxFlat_track")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+value = 100.0
+rounded = true
+
+[node name="value_label" type="Label" parent="Control/settings_margin/settings_container/menu_music_row/controls"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "100"
+label_settings = SubResource("LabelSettings_row")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="game_music_row" type="VBoxContainer" parent="Control/settings_margin/settings_container"]
+layout_mode = 2
+script = ExtResource("3_row")
+bus_name = "GameMusic"
+
+[node name="name_label" type="Label" parent="Control/settings_margin/settings_container/game_music_row"]
+layout_mode = 2
+text = "MUSICA DEL JUEGO"
+label_settings = SubResource("LabelSettings_row")
+
+[node name="controls" type="HBoxContainer" parent="Control/settings_margin/settings_container/game_music_row"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="slider" type="HSlider" parent="Control/settings_margin/settings_container/game_music_row/controls"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxFlat_track")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+value = 100.0
+rounded = true
+
+[node name="value_label" type="Label" parent="Control/settings_margin/settings_container/game_music_row/controls"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "100"
+label_settings = SubResource("LabelSettings_row")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="effects_row" type="VBoxContainer" parent="Control/settings_margin/settings_container"]
+layout_mode = 2
+script = ExtResource("3_row")
+bus_name = "Effects"
+
+[node name="name_label" type="Label" parent="Control/settings_margin/settings_container/effects_row"]
+layout_mode = 2
+text = "EFECTOS"
+label_settings = SubResource("LabelSettings_row")
+
+[node name="controls" type="HBoxContainer" parent="Control/settings_margin/settings_container/effects_row"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="slider" type="HSlider" parent="Control/settings_margin/settings_container/effects_row/controls"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxFlat_track")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+value = 100.0
+rounded = true
+
+[node name="value_label" type="Label" parent="Control/settings_margin/settings_container/effects_row/controls"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "100"
+label_settings = SubResource("LabelSettings_row")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="spacer" type="Control" parent="Control/settings_margin/settings_container"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="back_button" type="Button" parent="Control/settings_margin/settings_container"]
+custom_minimum_size = Vector2(400, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("4_normal")
+theme_override_styles/pressed = ExtResource("5_press")
+theme_override_styles/hover = ExtResource("6_hover")
+text = "VOLVER"
+language = "es_MX"
+
+[connection signal="value_changed" from="Control/settings_margin/settings_container/master_row/controls/slider" to="Control/settings_margin/settings_container/master_row" method="_on_slider_value_changed"]
+[connection signal="value_changed" from="Control/settings_margin/settings_container/menu_music_row/controls/slider" to="Control/settings_margin/settings_container/menu_music_row" method="_on_slider_value_changed"]
+[connection signal="value_changed" from="Control/settings_margin/settings_container/game_music_row/controls/slider" to="Control/settings_margin/settings_container/game_music_row" method="_on_slider_value_changed"]
+[connection signal="value_changed" from="Control/settings_margin/settings_container/effects_row/controls/slider" to="Control/settings_margin/settings_container/effects_row" method="_on_slider_value_changed"]
+[connection signal="pressed" from="Control/settings_margin/settings_container/back_button" to="Control/settings_margin/settings_container" method="_on_back_button_pressed"]

@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="Dancing Dead Dystopia"
+run/main_scene="uid://bobcn0qs6glx3"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
-run/main_scene="uid://bobcn0qs6glx3"
+
+[autoload]
+
+AudioSettings="*res://audio_settings.gd"
 
 [display]
 

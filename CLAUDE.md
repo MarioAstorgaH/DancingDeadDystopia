@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-"Dancing Dead Dystopia" (`config/name` in `project.godot` is spelled `DeadDancingDistopia`): a mobile, portrait-orientation 2D game built with **Godot 4.7** using GDScript. The UI text is in Spanish (`JUGAR`, `CONFIGURACION`, `SALIR`), so keep any new player-facing strings in Spanish.
+"Dancing Dead Dystopia" (the repo directory is spelled `dead-dancing-distopia`): a mobile, portrait-orientation 2D game built with **Godot 4.7** using GDScript. The UI text is in Spanish (`JUGAR`, `CONFIGURACION`, `SALIR`), so keep any new player-facing strings in Spanish.
 
 ## Commands
 
@@ -15,6 +15,7 @@ godot --editor --path .                          # open in editor
 godot --path . res://screen_main_menu.tscn       # run starting from the main menu
 godot --path . res://gameplay_scene.tscn         # run a specific scene
 godot --headless --path . --import               # re-import assets / regenerate .godot/ cache
+godot --headless --path . --check-only --script res://path/to/file.gd   # parse-check one script
 ```
 
 `run/main_scene` is `screen_main_menu.tscn`, so `godot --path .` (or F5) starts at the menu.
@@ -34,9 +35,14 @@ Scenes and scripts live at the project root. Assets are organized by type under 
 - `Assets/Images/Zombie/`: `zombie_frame_1..6.png`, an animation sequence intended for an `AnimatedSprite2D` / `SpriteFrames`.
 - `Assets/Fonts/ghost_shadow/`: the title and menu font.
 - `Assets/configs/buttons/`: shared `StyleBox` `.tres` resources for the menu buttons' normal, hover, and pressed states. Reuse these resources for new menu buttons instead of creating inline styles.
+- `Assets/Audio/audio perron/`: the button-press SFX (`.wav`) and the menu music `Plant Night Lullaby.m4a`. Godot can't import `.m4a` (it has no `.import` file), so the music has to be converted to `.ogg` or `.mp3` before it can be used. `default_bus_layout.tres` defines the audio buses `MenuMusic`, `GameMusic`, and `Effects` (all routed to `Master`). Assign players to the matching bus.
+- `Assets/Scripts/`: reusable scripts. `menu_button_sound.gd` (`class_name MainMenuButton extends Button`) is unfinished: `play_sound()` has no body, so the script fails to parse, and no scene uses it yet.
 
-Scene flow so far: `screen_main_menu.tscn` → `gameplay_scene.tscn`.
-- **Menu:** `menu_buttons.gd` is attached to `button_container` and handles all three menu buttons. JUGAR calls `change_scene_to_file`, and SALIR calls `quit()`. CONFIGURACION is `disabled` until a settings screen exists.
+The root-level `blue_button.gd` and `button_container.gd` are empty editor templates that no scene references.
+
+Scene flow so far: `screen_main_menu.tscn` → `gameplay_scene.tscn` or `screen_settings.tscn` (VOLVER returns to the menu).
+- **Menu:** `menu_buttons.gd` is attached to `button_container` and handles all three menu buttons. JUGAR and CONFIGURACION call `change_scene_to_file`, and SALIR calls `quit()`.
+- **Settings:** `AudioSettings` (`audio_settings.gd`) is an autoload. At startup it loads each bus's volume (0–100) from `user://settings.cfg` and applies it; 0 mutes the bus. In `screen_settings.tscn`, each slider row uses `volume_row.gd` with an exported `bus_name`. Values are saved when you leave the screen. To add a slider for a new bus, duplicate a row and change `bus_name`.
 - **Gameplay:** the root is a `Node2D` for the game world. Touch controls go under `HUD` (a `CanvasLayer`) and use anchored `Control`s, e.g. `bottom_left`, so they stay at the screen edges with `aspect="expand"`.
 
 Scene paths are hardcoded `res://` strings, so update them if you move files.
