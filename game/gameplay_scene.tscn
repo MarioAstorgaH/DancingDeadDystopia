@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://bngmcqe5apkxt"]
+
+[ext_resource type="PackedScene" path="res://hud/hud.tscn" id="1_hud"]
+
+[node name="Gameplay" type="Node2D" unique_id=1465382250]
+
+[node name="HUD" parent="." instance=ExtResource("1_hud")]

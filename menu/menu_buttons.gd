@@ -1,7 +1,7 @@
 extends VBoxContainer
 
-const SONG_SELECT_SCENE := "res://screen_song_select.tscn"
-const SETTINGS_SCENE := "res://screen_settings.tscn"
+const SONG_SELECT_SCENE := "res://song_select/screen_song_select.tscn"
+const SETTINGS_SCENE := "res://settings/screen_settings.tscn"
 
 
 func _on_play_button_pressed() -> void:

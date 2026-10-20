@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-AudioSettings="*res://audio_settings.gd"
+AudioSettings="*res://settings/audio_settings.gd"
 
 [display]
 

@@ -1,8 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="1_font"]
-[ext_resource type="Script" uid="uid://dckn386imqhyt" path="res://settings_screen.gd" id="2_settings"]
-[ext_resource type="Script" uid="uid://du0ae3d5yp0dj" path="res://volume_row.gd" id="3_row"]
+[ext_resource type="Script" uid="uid://dckn386imqhyt" path="res://settings/settings_screen.gd" id="2_settings"]
+[ext_resource type="Script" uid="uid://du0ae3d5yp0dj" path="res://settings/volume_row.gd" id="3_row"]
 [ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="4_normal"]
 [ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="5_press"]
 [ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="6_hover"]
@@ -40,6 +40,30 @@ corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
+
+[sub_resource type="Gradient" id="Gradient_grabber"]
+offsets = PackedFloat32Array(0, 0.76, 0.8, 0.93, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0.3, 0.6, 0.22, 1, 0.3, 0.6, 0.22, 1, 0.3, 0.6, 0.22, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_grabber"]
+gradient = SubResource("Gradient_grabber")
+width = 84
+height = 84
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="Gradient" id="Gradient_grabber_hl"]
+offsets = PackedFloat32Array(0, 0.76, 0.8, 0.93, 1)
+colors = PackedColorArray(0.85, 1, 0.8, 1, 0.85, 1, 0.8, 1, 0.3, 0.6, 0.22, 1, 0.3, 0.6, 0.22, 1, 0.3, 0.6, 0.22, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_grabber_hl"]
+gradient = SubResource("Gradient_grabber_hl")
+width = 84
+height = 84
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
 
 [node name="CanvasLayer" type="CanvasLayer"]
 
@@ -109,13 +133,15 @@ layout_mode = 2
 theme_override_constants/separation = 30
 
 [node name="slider" type="HSlider" parent="Control/settings_margin/settings_container/master_row/controls"]
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_styles/slider = SubResource("StyleBoxFlat_track")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+theme_override_icons/grabber = SubResource("GradientTexture2D_grabber")
+theme_override_icons/grabber_highlight = SubResource("GradientTexture2D_grabber_hl")
 value = 100.0
 rounded = true
 
@@ -142,13 +168,15 @@ layout_mode = 2
 theme_override_constants/separation = 30
 
 [node name="slider" type="HSlider" parent="Control/settings_margin/settings_container/menu_music_row/controls"]
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_styles/slider = SubResource("StyleBoxFlat_track")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+theme_override_icons/grabber = SubResource("GradientTexture2D_grabber")
+theme_override_icons/grabber_highlight = SubResource("GradientTexture2D_grabber_hl")
 value = 100.0
 rounded = true
 
@@ -175,13 +203,15 @@ layout_mode = 2
 theme_override_constants/separation = 30
 
 [node name="slider" type="HSlider" parent="Control/settings_margin/settings_container/game_music_row/controls"]
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_styles/slider = SubResource("StyleBoxFlat_track")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+theme_override_icons/grabber = SubResource("GradientTexture2D_grabber")
+theme_override_icons/grabber_highlight = SubResource("GradientTexture2D_grabber_hl")
 value = 100.0
 rounded = true
 
@@ -208,13 +238,15 @@ layout_mode = 2
 theme_override_constants/separation = 30
 
 [node name="slider" type="HSlider" parent="Control/settings_margin/settings_container/effects_row/controls"]
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_styles/slider = SubResource("StyleBoxFlat_track")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+theme_override_icons/grabber = SubResource("GradientTexture2D_grabber")
+theme_override_icons/grabber_highlight = SubResource("GradientTexture2D_grabber_hl")
 value = 100.0
 rounded = true
 

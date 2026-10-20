@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="1_font"]
-[ext_resource type="Script" uid="uid://dfnvkrh2asvxs" path="res://song_select.gd" id="2_select"]
+[ext_resource type="Script" uid="uid://dfnvkrh2asvxs" path="res://song_select/song_select.gd" id="2_select"]
 [ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="3_normal"]
 [ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="4_press"]
 [ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="5_hover"]

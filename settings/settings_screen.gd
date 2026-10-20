@@ -1,6 +1,6 @@
 extends VBoxContainer
 
-const MAIN_MENU_SCENE := "res://screen_main_menu.tscn"
+const MAIN_MENU_SCENE := "res://menu/screen_main_menu.tscn"
 
 
 func _notification(what: int) -> void:

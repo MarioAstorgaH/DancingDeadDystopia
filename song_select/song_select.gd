@@ -1,8 +1,8 @@
 extends VBoxContainer
 
-const MAIN_MENU_SCENE := "res://screen_main_menu.tscn"
-const GAMEPLAY_SCENE := "res://gameplay_scene.tscn"
-const SONG_CARD_SCENE := preload("res://song_card.tscn")
+const MAIN_MENU_SCENE := "res://menu/screen_main_menu.tscn"
+const GAMEPLAY_SCENE := "res://game/gameplay_scene.tscn"
+const SONG_CARD_SCENE := preload("res://song_select/song_card.tscn")
 
 var _songs: Array[SongInfo] = []
 var _sort_key := SongLibrary.SortKey.TITLE
