@@ -5,6 +5,7 @@
 [ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="2_wit27"]
 [ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="3_0owis"]
 [ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="4_klckv"]
+[ext_resource type="Script" uid="uid://5qqn0inqqepv" path="res://menu/menu_button_sound.gd" id="5_btnsnd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_yt575"]
 font = ExtResource("1_t0blr")
@@ -88,6 +89,7 @@ theme_override_styles/pressed = ExtResource("3_0owis")
 theme_override_styles/hover = ExtResource("4_klckv")
 text = "JUGAR"
 language = "es_MX"
+script = ExtResource("5_btnsnd")
 
 [node name="config_button" type="Button" parent="Control/main_margin/mainmenu_container/button_container" unique_id=793509096]
 custom_minimum_size = Vector2(400, 120)
@@ -101,6 +103,7 @@ theme_override_styles/pressed = ExtResource("3_0owis")
 theme_override_styles/hover = ExtResource("4_klckv")
 text = "CONFIGURACION"
 language = "es_MX"
+script = ExtResource("5_btnsnd")
 
 [node name="exit_button" type="Button" parent="Control/main_margin/mainmenu_container/button_container" unique_id=2101775047]
 custom_minimum_size = Vector2(400, 120)
@@ -114,6 +117,7 @@ theme_override_styles/pressed = ExtResource("3_0owis")
 theme_override_styles/hover = ExtResource("4_klckv")
 text = "SALIR"
 language = "es_MX"
+script = ExtResource("5_btnsnd")
 
 [connection signal="pressed" from="Control/main_margin/mainmenu_container/button_container/play_button" to="Control/main_margin/mainmenu_container/button_container" method="_on_play_button_pressed"]
 [connection signal="pressed" from="Control/main_margin/mainmenu_container/button_container/config_button" to="Control/main_margin/mainmenu_container/button_container" method="_on_config_button_pressed"]

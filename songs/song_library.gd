@@ -57,6 +57,11 @@ static func _load_song(id: String) -> SongInfo:
 	song.artist = str(data.get("artist", ""))
 	song.difficulty = int(data.get("difficulty", 1))
 	song.audio_path = folder + str(data.get("audio", "song.ogg"))
+	if data.has("lead"):
+		song.lead_path = folder + str(data["lead"])
+		if not ResourceLoader.exists(song.lead_path):
+			push_warning("Canción '%s': no existe la melodía %s, se toca sin ella" % [id, song.lead_path])
+			song.lead_path = ""
 	if data.has("cover"):
 		song.cover_path = folder + str(data["cover"])
 

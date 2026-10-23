@@ -10,6 +10,7 @@ var difficulty := 1
 var duration := 0.0  # segundos, calculado del audio
 var audio_path := ""
 var cover_path := ""  # vacío si la canción no tiene portada
+var lead_path := ""  # melodía original separada; vacío si la canción no la tiene
 
 
 func duration_text() -> String:
