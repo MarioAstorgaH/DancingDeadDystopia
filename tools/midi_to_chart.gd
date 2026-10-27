@@ -6,8 +6,9 @@ extends SceneTree
 ##   godot --headless --path . -s res://tools/midi_to_chart.gd -- --all
 
 const MIDI_NAME := "lead.mid"
-const CHART_NAME := "chart.json"
+const CHART_NAME := SongLibrary.CHART_NAME
 const LANE_NAMES := ["verde", "rojo", "amarillo", "azul"]
+const FIGURE_NAMES := {1: "negras", 2: "corcheas", 3: "tresillos", 4: "semicorcheas"}
 
 
 func _initialize() -> void:
@@ -49,16 +50,26 @@ func _convert(folder: String) -> bool:
 		printerr("%s: el MIDI no tiene notas" % folder)
 		return false
 
-	# Una nota por línea para que el archivo se pueda leer y comparar en git.
-	var lines := PackedStringArray()
+	# Una entrada por línea para que el archivo se pueda leer y comparar en git.
+	var tempo_lines := PackedStringArray()
+	for segment in midi.tempo_map().to_array():
+		tempo_lines.append("\t\t" + JSON.stringify({
+			"time": snappedf(segment.time, 0.0001),
+			"beat": snappedf(segment.beat, 0.0001),
+			"bpm": snappedf(segment.bpm, 0.001),
+		}, "", false))
+	var note_lines := PackedStringArray()
 	for note in chart:
-		lines.append("\t\t" + JSON.stringify({
+		note_lines.append("\t\t" + JSON.stringify({
 			"time": snappedf(note.time, 0.001),
 			"length": snappedf(note.length, 0.001),
 			"pitch": note.pitch,
 			"lane": note.lane,
+			"beat": snappedf(note.beat, 0.0001),
+			"subdivision": note.subdivision,
 		}, "", false))
-	var text := '{\n\t"version": 1,\n\t"source": "%s",\n\t"notes": [\n%s\n\t]\n}\n' % [MIDI_NAME, ",\n".join(lines)]
+	var text := '{\n\t"version": %d,\n\t"source": "%s",\n\t"tempo": [\n%s\n\t],\n\t"notes": [\n%s\n\t]\n}\n' % [
+		Chart.VERSION, MIDI_NAME, ",\n".join(tempo_lines), ",\n".join(note_lines)]
 
 	var file := FileAccess.open(folder + "/" + CHART_NAME, FileAccess.WRITE)
 	if file == null:
@@ -79,4 +90,11 @@ func _print_summary(folder: String, chart: Array[Dictionary]) -> void:
 	var lanes := PackedStringArray()
 	for lane in LANE_NAMES.size():
 		lanes.append("%s %d" % [LANE_NAMES[lane], per_lane[lane]])
-	print("%s: %d notas, %.2f notas/s | %s" % [folder, chart.size(), chart.size() / duration, ", ".join(lanes)])
+	var per_subdivision := {}
+	for note in chart:
+		per_subdivision[note.subdivision] = per_subdivision.get(note.subdivision, 0) + 1
+	var figures := PackedStringArray()
+	for subdivision in ChartMapper.SUBDIVISIONS:
+		figures.append("%s %d" % [FIGURE_NAMES[subdivision], per_subdivision.get(subdivision, 0)])
+	print("%s: %d notas, %.2f notas/s | %s | %s" % [
+		folder, chart.size(), chart.size() / duration, ", ".join(lanes), ", ".join(figures)])

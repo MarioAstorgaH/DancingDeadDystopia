@@ -29,3 +29,5 @@ stream = ExtResource("3_countdown")
 bus = &"Effects"
 
 [node name="HUD" parent="." instance=ExtResource("1_hud")]
+
+[connection signal="lane_pressed" from="HUD" to="." method="_on_hud_lane_pressed"]

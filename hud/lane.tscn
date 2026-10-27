@@ -25,6 +25,8 @@ mouse_filter = 2
 [node name="button" type="TouchScreenButton" parent="."]
 shape = SubResource("RectangleShape2D_brain")
 
+[node name="notes" type="Node2D" parent="."]
+
 [connection signal="resized" from="." to="." method="_layout"]
 [connection signal="pressed" from="button" to="." method="_on_button_pressed"]
 [connection signal="released" from="button" to="." method="_on_button_released"]

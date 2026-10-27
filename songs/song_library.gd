@@ -7,6 +7,7 @@ extends RefCounted
 enum SortKey { DIFFICULTY, TITLE, ARTIST, DURATION }
 
 const SONGS_DIR := "res://Assets/Songs/"
+const CHART_NAME := "chart.json"
 
 ## Canción elegida en el selector; la lee `gameplay_scene`.
 static var selected_song: SongInfo
@@ -62,6 +63,8 @@ static func _load_song(id: String) -> SongInfo:
 		if not ResourceLoader.exists(song.lead_path):
 			push_warning("Canción '%s': no existe la melodía %s, se toca sin ella" % [id, song.lead_path])
 			song.lead_path = ""
+	if FileAccess.file_exists(folder + CHART_NAME):
+		song.chart_path = folder + CHART_NAME
 	if data.has("cover"):
 		song.cover_path = folder + str(data["cover"])
 

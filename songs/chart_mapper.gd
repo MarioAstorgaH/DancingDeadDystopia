@@ -13,14 +13,19 @@ const PHRASE_MAX_BARS := 4
 const MIN_PHRASE_SPAN := 7  # semitonos: una frase cerrada no salta a los extremos
 const LEAP := 3  # semitonos: desde aquí el salto obliga a cambiar de carril
 const OCTAVE := 12
+## Saltos por tiempo de cada tipo de nota, de la figura más larga a la más corta:
+## negra, corchea, tresillo de corcheas, semicorchea.
+const SUBDIVISIONS := [1, 2, 3, 4]
+const GRID_TOLERANCE := 0.04  # tiempos que una nota puede desviarse de la rejilla
 
 
-## Devuelve las notas {time, length, pitch, lane} ordenadas por tiempo.
+## Devuelve las notas {time, length, pitch, lane, beat, subdivision} ordenadas por tiempo.
 static func map(midi: MidiFile) -> Array[Dictionary]:
 	var chart: Array[Dictionary] = []
 	for phrase in _split_phrases(_merge_chords(midi.notes), midi):
 		_assign_lanes(phrase)
 		chart.append_array(phrase)
+	_assign_subdivisions(chart, midi.tempo_map())
 	return chart
 
 
@@ -90,3 +95,38 @@ static func _keep_direction(previous: Dictionary, pitch: int, lane: int) -> int:
 	if (lane - previous.lane) * direction < min_move:
 		lane = previous.lane + direction * min_move
 	return lane
+
+
+## Cada nota salta al ritmo de la figura más larga que encaje con su posición en el
+## compás y con la distancia a las notas vecinas: una nota suelta en el tiempo salta
+## en negras y una carrera de semicorcheas salta en semicorcheas.
+static func _assign_subdivisions(chart: Array[Dictionary], tempo: TempoMap) -> void:
+	for note in chart:
+		note.beat = tempo.beat_at(note.time)
+	for i in chart.size():
+		var note := chart[i]
+		var gap := INF
+		if i > 0:
+			gap = note.beat - chart[i - 1].beat
+		if i < chart.size() - 1:
+			gap = minf(gap, chart[i + 1].beat - note.beat)
+		note.subdivision = _fit_subdivision(note.beat, gap)
+		if _on_grid(note.beat, note.subdivision):
+			note.beat = roundf(note.beat * note.subdivision) / note.subdivision
+
+
+## Si las notas están más juntas que una semicorchea, usa la figura más corta en cuya
+## rejilla cae la nota; si no cae en ninguna, salta en semicorcheas.
+static func _fit_subdivision(beat: float, gap: float) -> int:
+	var finest_on_grid := 0
+	for subdivision in SUBDIVISIONS:
+		if _on_grid(beat, subdivision):
+			if gap >= 1.0 / subdivision - GRID_TOLERANCE:
+				return subdivision
+			finest_on_grid = subdivision
+	return finest_on_grid if finest_on_grid > 0 else SUBDIVISIONS[-1]
+
+
+static func _on_grid(beat: float, subdivision: int) -> bool:
+	var steps := beat * subdivision
+	return absf(steps - roundf(steps)) <= GRID_TOLERANCE * subdivision

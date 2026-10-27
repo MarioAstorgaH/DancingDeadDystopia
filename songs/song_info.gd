@@ -11,6 +11,7 @@ var duration := 0.0  # segundos, calculado del audio
 var audio_path := ""
 var cover_path := ""  # vacío si la canción no tiene portada
 var lead_path := ""  # melodía original separada; vacío si la canción no la tiene
+var chart_path := ""  # notas del juego; vacío si todavía no se generó el chart.json
 
 
 func duration_text() -> String:

@@ -13,6 +13,10 @@ const BUTTON_FILL := 0.9  # parte del ancho del carril que ocupa el cerebro
 const BOTTOM_MARGIN := 80.0  # espacio bajo el cerebro, para no chocar con la barra de gestos
 const STRIP_ALPHA := 0.15
 const STRIP_PRESSED_ALPHA := 0.35
+const NOTE_FILL := 0.3  # radio de las notas, en fracción del ancho del carril
+const NOTE_MAX_RADIUS := 90.0
+const DISABLED_MODULATE := Color(0.45, 0.45, 0.45, 0.7)
+const ENABLE_FADE := 0.25  # segundos
 
 @export var lane: ChartMapper.Lane
 @export var color := Color.WHITE
@@ -21,12 +25,39 @@ const STRIP_PRESSED_ALPHA := 0.35
 
 @onready var _strip: ColorRect = $strip
 @onready var _button: TouchScreenButton = $button
+@onready var _notes: Node2D = $notes
+
+var _fade: Tween
+
+
+## Encendido, el carril se ve normal y responde al toque. Apagado (como empieza) se ve
+## gris y el botón no responde; las notas no se apagan, para que se vean llegar.
+func set_enabled(enabled: bool) -> void:
+	_button.process_mode = Node.PROCESS_MODE_INHERIT if enabled else Node.PROCESS_MODE_DISABLED
+	if not enabled:
+		_set_strip_alpha(STRIP_ALPHA)
+	var target := Color.WHITE if enabled else DISABLED_MODULATE
+	if _fade:
+		_fade.kill()
+	_fade = create_tween().set_parallel()
+	_fade.tween_property(_button, "modulate", target, ENABLE_FADE)
+	_fade.tween_property(_strip, "modulate", target, ENABLE_FADE)
+
+
+## Agrega una nota al carril; sus coordenadas son relativas al centro del carril.
+func add_note(note: LaneNote) -> void:
+	note.color = color
+	note.radius = minf(size.x * NOTE_FILL, NOTE_MAX_RADIUS)
+	_notes.add_child(note)
 
 
 func _ready() -> void:
 	_button.texture_normal = texture_normal
 	_button.texture_pressed = texture_pressed
 	_set_strip_alpha(STRIP_ALPHA)
+	_button.process_mode = Node.PROCESS_MODE_DISABLED
+	_button.modulate = DISABLED_MODULATE
+	_strip.modulate = DISABLED_MODULATE
 	_layout()
 
 
@@ -41,6 +72,7 @@ func _layout() -> void:
 	_button.scale = Vector2(s, s)
 	var center := Vector2(size.x / 2.0, size.y - BOTTOM_MARGIN - BRAIN_SIZE.y / 2.0 * s)
 	_button.position = center - BRAIN_CENTER * s
+	_notes.position.x = size.x / 2.0
 
 
 func _set_strip_alpha(alpha: float) -> void:

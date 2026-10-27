@@ -40,6 +40,14 @@ func beat_length_at(time: float) -> float:
 	return tempo / 1_000_000.0
 
 
+## El mapa de tempo del archivo, para convertir segundos a tiempos (negras).
+func tempo_map() -> TempoMap:
+	var map := TempoMap.new()
+	for entry in _tempos:
+		map.add(entry.time, float(entry.tick) / _ticks_per_quarter, 60_000_000.0 / entry.tempo)
+	return map
+
+
 ## Duración de un compás en segundos, según el tempo y el compás vigentes.
 func bar_length_at(time: float) -> float:
 	var numerator := 4
