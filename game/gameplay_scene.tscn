@@ -1,7 +1,31 @@
 [gd_scene format=3 uid="uid://bngmcqe5apkxt"]
 
+[ext_resource type="Script" uid="uid://bp407t4oxsb77" path="res://game/gameplay.gd" id="1_gameplay"]
 [ext_resource type="PackedScene" path="res://hud/hud.tscn" id="1_hud"]
+[ext_resource type="Script" uid="uid://riiot74xfp8k" path="res://game/song_player.gd" id="2_player"]
+[ext_resource type="AudioStream" uid="uid://bt1enu0p5kpfk" path="res://Assets/Audio/audio perron/cuenta_regresiva.wav" id="3_countdown"]
 
 [node name="Gameplay" type="Node2D" unique_id=1465382250]
+script = ExtResource("1_gameplay")
+
+[node name="Background" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="color" type="ColorRect" parent="Background"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.14, 0.06, 0.22, 1)
+
+[node name="SongPlayer" type="AudioStreamPlayer" parent="."]
+bus = &"GameMusic"
+script = ExtResource("2_player")
+
+[node name="CountdownSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_countdown")
+bus = &"Effects"
 
 [node name="HUD" parent="." instance=ExtResource("1_hud")]
