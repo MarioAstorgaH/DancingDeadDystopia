@@ -3,10 +3,11 @@ extends RefCounted
 
 ## Las notas de una canción, leídas de su `chart.json` (lo genera `tools/midi_to_chart.gd`).
 
-const VERSION := 2
+const VERSION := 3
 
 var tempo: TempoMap
-## Ordenadas por tiempo: {time, length, pitch, lane, beat, subdivision}.
+## Ordenadas por tiempo: {time, length, pitch, lane, beat, subdivision, group}. Las notas
+## con el mismo `group` forman una figura de varios golpes (ver ChartMapper).
 var notes: Array[Dictionary] = []
 
 
@@ -29,5 +30,6 @@ static func load_file(path: String) -> Chart:
 			"lane": int(note.lane),
 			"beat": float(note.beat),
 			"subdivision": int(note.subdivision),
+			"group": int(note.group),
 		})
 	return chart

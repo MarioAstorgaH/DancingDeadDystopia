@@ -3,13 +3,16 @@ extends Node2D
 
 ## Una nota del juego. Todas saltan juntas en cada tiempo de la canción y siempre quedan
 ## a la altura de lo que les falta; el último salto aterriza sobre el botón justo a tiempo.
-## Una nota especial junta varios golpes seguidos del mismo carril (corcheas, tresillos,
-## semicorcheas): al tocarla retrocede lo que falta para el siguiente golpe y hay que
-## volver a tocarla cuando regresa. Lleva un anillo y los golpes que le quedan.
+## Una nota especial es una figura de varios golpes (corcheas, tresillo o semicorcheas
+## de un mismo tiempo): al tocarla retrocede lo que falta para el siguiente golpe y hay
+## que volver a tocarla cuando regresa. Lleva un anillo y los golpes que le quedan.
 
 const HOP_BEATS := 0.2  # duración máxima de un salto, en tiempos
 const HOP_GROW := 0.18  # cuánto crece a mitad del salto, como si brincara hacia la cámara
 const KNOCK_BEATS := 0.25  # duración máxima del retroceso al tocar una nota especial
+## Hasta dónde retrocede (en tiempos de altura) aunque falte más para su siguiente golpe:
+## la nota que viene detrás en el carril siempre descansa a un tiempo o más.
+const KNOCK_HEIGHT := 0.5
 const OUTLINE_COLOR := Color(0.05, 0.02, 0.08)
 const OUTLINE_WIDTH := 6.0
 const RING_WIDTH := 8.0
@@ -57,7 +60,8 @@ func place(beat: float, hit_y: float, beat_px: float) -> void:
 		var next_hop := minf(floorf(beat) + 1.0, goal)
 		var hop := minf(HOP_BEATS, next_hop - last_hop)
 		t = clampf((beat - next_hop) / hop + 1.0, 0.0, 1.0)
-		height = lerpf(goal - last_hop, goal - next_hop, ease(t, 0.5))
+		var cap := KNOCK_HEIGHT if _index > 0 else INF
+		height = lerpf(minf(goal - last_hop, cap), minf(goal - next_hop, cap), ease(t, 0.5))
 		if _index > 0:
 			var knock := minf(KNOCK_BEATS, (goal - _since) / 2.0)
 			height *= ease(clampf((beat - _since) / knock, 0.0, 1.0), 0.4)
@@ -103,14 +107,20 @@ func _vanish(end_scale: Vector2, duration: float) -> void:
 func _draw() -> void:
 	draw_circle(Vector2.ZERO, radius + OUTLINE_WIDTH, OUTLINE_COLOR)
 	draw_circle(Vector2.ZERO, radius, color)
-	var remaining := hits.size() - _index
-	if hits.size() > 1 and remaining > 0:
+	if hits.size() > 1 and not is_finished():
 		draw_arc(Vector2.ZERO, radius - RING_WIDTH, 0.0, TAU, 48, Color.WHITE, RING_WIDTH)
-		# Los glifos de Ghost Shadow miden ~2.2 veces el tamaño de fuente y suben mucho
-		# sobre la línea base; con estos valores el número queda centrado en el anillo.
-		var size := int(radius * 0.6)
-		var baseline := Vector2(-radius, size * 0.725)
-		draw_string_outline(FONT, baseline, str(remaining), HORIZONTAL_ALIGNMENT_CENTER, radius * 2.0, size, 8, OUTLINE_COLOR)
-		draw_string(FONT, baseline, str(remaining), HORIZONTAL_ALIGNMENT_CENTER, radius * 2.0, size)
+		_draw_badge()
 	if _flash > 0.0:
 		draw_circle(Vector2.ZERO, radius, Color(1.0, 1.0, 1.0, _flash * 0.8))
+
+
+## Lo que identifica a una nota especial: por ahora los golpes que le quedan. Aquí irá
+## el ícono de cada tipo (`hits[0].subdivision`: 2 corcheas, 3 tresillo, 4 semicorcheas).
+func _draw_badge() -> void:
+	# Los glifos de Ghost Shadow miden ~2.2 veces el tamaño de fuente y suben mucho
+	# sobre la línea base; con estos valores el número queda centrado en el anillo.
+	var size := int(radius * 0.6)
+	var baseline := Vector2(-radius, size * 0.725)
+	var text := str(hits.size() - _index)
+	draw_string_outline(FONT, baseline, text, HORIZONTAL_ALIGNMENT_CENTER, radius * 2.0, size, 8, OUTLINE_COLOR)
+	draw_string(FONT, baseline, text, HORIZONTAL_ALIGNMENT_CENTER, radius * 2.0, size)

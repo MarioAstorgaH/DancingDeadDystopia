@@ -13,15 +13,13 @@ const GO_TIME := 0.6  # segundos que se queda el "YA" en pantalla
 const LOOKAHEAD_BEATS := 4.0  # tiempos que tarda una nota en bajar de arriba al botón
 const TOP_MARGIN := 120.0  # píxeles libres arriba de donde empiezan a verse las notas
 const HIT_WINDOW := 0.12  # segundos de tolerancia antes y después de la nota
-## Golpes del mismo carril a esta distancia o menos (en negras) forman una nota especial:
-## 0.5 junta corcheas, tresillos y semicorcheas.
-const MERGE_BEATS := 0.5
 
 var _chart: Chart
 var _groups: Array[Array] = []  # los golpes de cada nota, en orden de aparición
 var _next_group := 0  # índice en _groups de la siguiente nota por aparecer
 var _active: Array[LaneNote] = []  # notas en pantalla con golpes pendientes
 var _countdown_played := false
+var _offset := 0.0  # el `offset` de song.json
 var _lanes_enabled := false
 
 @onready var _player: SongPlayer = $SongPlayer
@@ -40,23 +38,20 @@ func _ready() -> void:
 		_chart = Chart.load_file(song.chart_path)
 		if _chart:
 			_groups = _group_hits(_chart.notes)
+			_offset = song.offset
 	else:
 		push_warning("'%s' no tiene chart.json; se toca sin notas" % song.id)
 	_player.play_song(song, LEAD_IN)
 
 
-## Junta en una sola nota los golpes seguidos del mismo carril separados por MERGE_BEATS
-## o menos; los de otros carriles pueden caer en medio.
+## Junta en una sola nota los golpes de cada figura (los que comparten `group`).
 func _group_hits(notes: Array[Dictionary]) -> Array[Array]:
 	var groups: Array[Array] = []
-	var open := {}  # carril -> su último grupo
 	for note in notes:
-		var group: Array = open.get(note.lane, [])
-		if group.is_empty() or note.beat - group[-1].beat > MERGE_BEATS + 0.001:
-			group = []
-			groups.append(group)
-			open[note.lane] = group
-		group.append(note)
+		if not groups.is_empty() and groups[-1][0].group == note.group:
+			groups[-1].append(note)
+		else:
+			groups.append([note])
 	return groups
 
 
@@ -70,9 +65,9 @@ func _first_song_for_testing() -> SongInfo:
 
 
 func _process(_delta: float) -> void:
-	var now := _player.song_time()
-	_update_countdown(now)
+	_update_countdown(_player.song_time())
 	if _chart:
+		var now := _chart_time()
 		var beat := _chart.tempo.beat_at(now)
 		_spawn_notes(beat)
 		_move_notes(beat)
@@ -129,8 +124,13 @@ func _miss_late_notes(now: float, beat: float) -> void:
 				break
 
 
+## Tiempo de la canción para las notas: el del audio, recorrido por el `offset` de la canción.
+func _chart_time() -> float:
+	return _player.song_time() - _offset
+
+
 func _on_hud_lane_pressed(lane: ChartMapper.Lane) -> void:
-	var now := _player.song_time()
+	var now := _chart_time()
 	# El golpe más próximo del carril dentro de la ventana.
 	var closest: LaneNote = null
 	for note in _active:

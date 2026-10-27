@@ -8,7 +8,7 @@ extends SceneTree
 const MIDI_NAME := "lead.mid"
 const CHART_NAME := SongLibrary.CHART_NAME
 const LANE_NAMES := ["verde", "rojo", "amarillo", "azul"]
-const FIGURE_NAMES := {1: "negras", 2: "corcheas", 3: "tresillos", 4: "semicorcheas"}
+const FIGURE_NAMES := {2: "corcheas", 3: "tresillos", 4: "semicorcheas"}
 
 
 func _initialize() -> void:
@@ -67,6 +67,7 @@ func _convert(folder: String) -> bool:
 			"lane": note.lane,
 			"beat": snappedf(note.beat, 0.0001),
 			"subdivision": note.subdivision,
+			"group": note.group,
 		}, "", false))
 	var text := '{\n\t"version": %d,\n\t"source": "%s",\n\t"tempo": [\n%s\n\t],\n\t"notes": [\n%s\n\t]\n}\n' % [
 		Chart.VERSION, MIDI_NAME, ",\n".join(tempo_lines), ",\n".join(note_lines)]
@@ -90,11 +91,16 @@ func _print_summary(folder: String, chart: Array[Dictionary]) -> void:
 	var lanes := PackedStringArray()
 	for lane in LANE_NAMES.size():
 		lanes.append("%s %d" % [LANE_NAMES[lane], per_lane[lane]])
-	var per_subdivision := {}
-	for note in chart:
-		per_subdivision[note.subdivision] = per_subdivision.get(note.subdivision, 0) + 1
-	var figures := PackedStringArray()
-	for subdivision in ChartMapper.SUBDIVISIONS:
-		figures.append("%s %d" % [FIGURE_NAMES[subdivision], per_subdivision.get(subdivision, 0)])
-	print("%s: %d notas, %.2f notas/s | %s | %s" % [
-		folder, chart.size(), chart.size() / duration, ", ".join(lanes), ", ".join(figures)])
+	var simple := 0
+	var figures := {}
+	for i in chart.size():
+		var note: Dictionary = chart[i]
+		if note.subdivision == 1:
+			simple += 1
+		elif i == 0 or chart[i - 1].group != note.group:
+			figures[note.subdivision] = figures.get(note.subdivision, 0) + 1
+	var parts := PackedStringArray(["sencillas %d" % simple])
+	for figure in ChartMapper.FIGURES:
+		parts.append("%s %d" % [FIGURE_NAMES[figure], figures.get(figure, 0)])
+	print("%s: %d golpes, %.2f golpes/s | %s | %s" % [
+		folder, chart.size(), chart.size() / duration, ", ".join(lanes), ", ".join(parts)])

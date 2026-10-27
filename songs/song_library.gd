@@ -57,6 +57,7 @@ static func _load_song(id: String) -> SongInfo:
 	song.title = str(data.get("title", id))
 	song.artist = str(data.get("artist", ""))
 	song.difficulty = int(data.get("difficulty", 1))
+	song.offset = float(data.get("offset", 0.0))
 	song.audio_path = folder + str(data.get("audio", "song.ogg"))
 	if data.has("lead"):
 		song.lead_path = folder + str(data["lead"])

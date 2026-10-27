@@ -1,10 +1,12 @@
 """Genera el lead.mid de una canción a partir de su audio, para cuando no hay MIDI.
 
-1. Mide el tempo y dónde cae el primer tiempo en el fondo (`audio` de song.json).
-   Supone tempo fijo, como en una canción grabada con metrónomo, y avisa si no lo es.
-2. Transcribe la melodía (`lead` de song.json) con basic-pitch.
-3. Deja una nota a la vez y la ajusta a la rejilla de semicorcheas o de tresillos,
-   para que el juego le asigne su figura.
+1. Mide el tempo y dónde cae el primer tiempo en el fondo (`audio` de song.json),
+   alineado al inicio de los golpes (donde se sienten), no a su pico. Supone tempo fijo,
+   como en una canción grabada con metrónomo, y avisa si no lo es.
+2. Transcribe la melodía (`lead` de song.json) con basic-pitch, parte las notas en cada
+   sílaba que tienen dentro (el rap queda en una nota larga si no) y mueve el inicio de
+   cada nota al ataque de su sílaba.
+3. Deja una nota a la vez y la ajusta a la rejilla de semicorcheas o de tresillos.
 
 Necesita un entorno con basic-pitch (sin TensorFlow, usa el modelo ONNX), onnxruntime y librosa:
     python3 -m venv ~/transcribe-env
@@ -32,6 +34,25 @@ SECTION = 20.0  # segundos por sección al revisar que el tempo sea fijo
 MAX_DRIFT = 0.04  # segundos que puede desviarse una sección de la rejilla
 LEGATO_GAP = 0.05  # segundos: fragmentos de la misma nota más juntos que esto se unen
 QUIET_DB = -40.0  # dB respecto al pico de la melodía: más bajo es residuo de la separación
+ATTACK_WINDOW = 0.06  # segundos: golpes más lejos de un tiempo no cuentan para alinear la rejilla
+MIN_SYLLABLE = 0.08  # segundos: no se parte una nota en pedazos más cortos que esto
+ALIGN_WINDOW = 0.07  # segundos que se puede mover el inicio de una nota hacia su ataque
+## Una sílaba que basic-pitch no transcribió se agrega solo si suena casi tan fuerte como
+## las notas (dB del pico) y está separada de ellas; si no, suele ser consonante o respiración.
+EXTRA_SYLLABLE_DB = -14.0
+EXTRA_SYLLABLE_GAP = 0.12  # segundos
+
+
+def attack_starts(y: np.ndarray, sr: int) -> np.ndarray:
+    """Segundos en que empieza cada ataque (golpe o sílaba). El oído siente el golpe en
+    su inicio; el pico de la detección llega unos 20 ms después."""
+    hop = 128
+    env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop)
+    rms = librosa.feature.rms(y=y, hop_length=hop)[0]
+    level = 20 * np.log10(rms / rms.max() + 1e-9)
+    frames = librosa.onset.onset_detect(onset_envelope=env, sr=sr, hop_length=hop, backtrack=True, energy=rms)
+    frames = [f for f in frames if level[f:f + 8].max() >= QUIET_DB]
+    return librosa.frames_to_time(np.array(frames, dtype=int), sr=sr, hop_length=hop)
 
 
 def measure_tempo(path: Path) -> tuple[float, float]:
@@ -66,6 +87,12 @@ def measure_tempo(path: Path) -> tuple[float, float]:
         drift = shifts[int(np.argmax(local))]
         if abs(drift) > MAX_DRIFT:
             print(f"  AVISO: {start:.0f}-{start + SECTION:.0f} s se desvía {drift * 1000:+.0f} ms; el tempo no es fijo")
+
+    starts = attack_starts(y, sr)
+    residual = starts - (phase + np.round((starts - phase) / ibi) * ibi)
+    shift = float(np.median(residual[np.abs(residual) < ATTACK_WINDOW]))
+    phase = (phase + shift) % ibi
+    print(f"rejilla movida {shift * 1000:+.0f} ms al inicio de los golpes: primer tiempo en {phase:.3f} s")
     return ibi, phase
 
 
@@ -98,10 +125,9 @@ def transcribe(path: Path) -> list[tuple[float, float, int, float]]:
     return sorted((float(s), float(e), int(p), float(a)) for s, e, p, a, *_ in events)
 
 
-def drop_quiet(notes, path: Path):
+def drop_quiet(notes, y: np.ndarray, sr: int):
     """Quita notas donde la melodía casi no suena: basic-pitch normaliza el audio y
     transcribe hasta el residuo de otros instrumentos que deja la separación."""
-    y, sr = librosa.load(path, sr=22050)
     hop = 512
     rms = librosa.feature.rms(y=y, hop_length=hop)[0]
     level = 20 * np.log10(rms / rms.max() + 1e-9)
@@ -122,6 +148,47 @@ def merge_legato(notes):
         else:
             merged.append(note)
     return merged
+
+
+def split_at_attacks(notes, attacks: np.ndarray):
+    """Parte cada nota en las sílabas que tiene dentro: basic-pitch junta en una nota larga
+    las sílabas seguidas de la misma altura, como en el rap."""
+    split = []
+    for start, end, pitch, amp in notes:
+        cuts = [float(a) for a in attacks if start + MIN_SYLLABLE < a < end - MIN_SYLLABLE / 2]
+        bounds = [start, *cuts, end]
+        split += [(a, b, pitch, amp) for a, b in zip(bounds, bounds[1:])]
+    if len(split) > len(notes):
+        print(f"{len(split) - len(notes)} sílabas separadas de notas largas")
+    return split
+
+
+def align_to_attacks(notes, attacks: np.ndarray, y: np.ndarray, sr: int):
+    """Mueve el inicio de cada nota al ataque de su sílaba (basic-pitch la marca cuando ya
+    reconoce la altura, después de que empezó) y agrega las sílabas que no transcribió,
+    como en el rap casi hablado, con la altura de la nota más cercana."""
+    aligned = []
+    for start, end, pitch, amp in notes:
+        nearest = float(attacks[np.argmin(np.abs(attacks - start))])
+        if abs(nearest - start) <= ALIGN_WINDOW:
+            start = nearest
+        aligned.append((start, end, pitch, amp))
+    starts = np.array([n[0] for n in aligned])
+    hop = 128
+    rms = librosa.feature.rms(y=y, hop_length=hop)[0]
+    level = 20 * np.log10(rms / rms.max() + 1e-9)
+    added = []
+    for attack in attacks:
+        frame = int(attack * sr / hop)
+        if np.abs(starts - attack).min() < EXTRA_SYLLABLE_GAP or level[frame:frame + 8].max() < EXTRA_SYLLABLE_DB:
+            continue
+        near = min(aligned, key=lambda n: min(abs(n[0] - attack), abs(n[1] - attack)))
+        if min(abs(near[0] - attack), abs(near[1] - attack)) < 0.5:
+            # Menos intensidad: si cae en la misma posición que una nota transcrita, gana esa.
+            added.append((float(attack), float(attack) + 2 * MIN_SYLLABLE, near[2], near[3] / 2))
+    if added:
+        print(f"{len(added)} sílabas sin altura clara agregadas")
+    return sorted(aligned + added)
 
 
 def snap(beat: float, subdivision: int) -> float:
@@ -214,7 +281,10 @@ def main():
     ibi, phase = measure_tempo(args.folder / info["audio"])
     grid = BeatGrid(ibi, phase)
     lead = args.folder / info["lead"]
-    raw = merge_legato(drop_quiet(transcribe(lead), lead))
+    y, sr = librosa.load(lead, sr=22050)
+    attacks = attack_starts(y, sr)
+    raw = merge_legato(drop_quiet(transcribe(lead), y, sr))
+    raw = align_to_attacks(split_at_attacks(raw, attacks), attacks, y, sr)
     notes = quantize(raw, grid, args.min_gap)
     write_midi(args.folder / "lead.mid", notes, grid)
     seconds = ibi * (notes[-1][0] - notes[0][0]) if len(notes) > 1 else 1.0
