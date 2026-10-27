@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://bhl5trepiagih" path="res://hud/lane.gd" id="1_lane"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_brain"]
+size = Vector2(300, 300)
+
+[node name="lane" type="Control"]
+layout_mode = 3
+size_flags_horizontal = 3
+mouse_filter = 2
+script = ExtResource("1_lane")
+
+[node name="strip" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_right = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="button" type="TouchScreenButton" parent="."]
+shape = SubResource("RectangleShape2D_brain")
+
+[connection signal="resized" from="." to="." method="_layout"]
+[connection signal="pressed" from="button" to="." method="_on_button_pressed"]
+[connection signal="released" from="button" to="." method="_on_button_released"]
