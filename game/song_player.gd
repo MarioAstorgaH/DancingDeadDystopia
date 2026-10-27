@@ -16,6 +16,7 @@ var _lead_db := 0.0
 var _fade: Tween
 var _origin_usec := 0  # Time.get_ticks_usec() en el que la canción está en 0
 var _waiting := false  # hay una canción esperando a que termine la cuenta regresiva
+var _paused_usec := -1  # cuándo se pausó el juego; -1 si no está en pausa
 
 
 func _init() -> void:
@@ -45,6 +46,15 @@ func _process(_delta: float) -> void:
 		_follow_audio(latency)
 
 
+func _notification(what: int) -> void:
+	# Con el juego en pausa el audio se detiene solo; el reloj se congela con él.
+	if what == NOTIFICATION_PAUSED:
+		_paused_usec = Time.get_ticks_usec()
+	elif what == NOTIFICATION_UNPAUSED and _paused_usec >= 0:
+		_origin_usec += Time.get_ticks_usec() - _paused_usec
+		_paused_usec = -1
+
+
 ## Baja la melodía al fallar y la sube al atinar. Sin `lead` no hace nada.
 func set_lead_muted(muted: bool) -> void:
 	if _sync == null or _sync.stream_count < 2:
@@ -56,10 +66,11 @@ func set_lead_muted(muted: bool) -> void:
 
 
 ## Posición de la canción en segundos, compensando la latencia del audio.
-## Es negativa durante la espera antes de que empiece. Avanza parejo; solo salta
+## Es negativa durante la espera antes de que empiece y no avanza en pausa. Avanza parejo; solo salta
 ## si el audio se desfasa más de CLOCK_RESYNC.
 func song_time() -> float:
-	return (Time.get_ticks_usec() - _origin_usec) / 1_000_000.0
+	var now := _paused_usec if _paused_usec >= 0 else Time.get_ticks_usec()
+	return (now - _origin_usec) / 1_000_000.0
 
 
 func _follow_audio(latency: float) -> void:

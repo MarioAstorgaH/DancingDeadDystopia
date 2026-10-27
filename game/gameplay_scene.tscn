@@ -31,3 +31,8 @@ bus = &"Effects"
 [node name="HUD" parent="." instance=ExtResource("1_hud")]
 
 [connection signal="lane_pressed" from="HUD" to="." method="_on_hud_lane_pressed"]
+[connection signal="pause_requested" from="HUD" to="." method="_on_hud_pause_requested"]
+[connection signal="resume_requested" from="HUD" to="." method="_on_hud_resume_requested"]
+[connection signal="retry_requested" from="HUD" to="." method="_on_hud_retry_requested"]
+[connection signal="quit_requested" from="HUD" to="." method="_on_hud_quit_requested"]
+[connection signal="finished" from="SongPlayer" to="." method="_on_song_player_finished"]

@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://b2x6hyxdrkqx4" path="res://hud/pause_menu.gd" id="1_menu"]
+[ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="2_font"]
+[ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="3_normal"]
+[ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="4_press"]
+[ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="5_hover"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("2_font")
+font_size = 90
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[node name="pause_menu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.02, 0.08, 0.75)
+
+[node name="center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="menu" type="VBoxContainer" parent="center"]
+custom_minimum_size = Vector2(640, 0)
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="title" type="Label" parent="center/menu"]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+text = "PAUSA"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="resume_button" type="Button" parent="center/menu"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover = ExtResource("5_hover")
+text = "CONTINUAR"
+language = "es_MX"
+
+[node name="retry_button" type="Button" parent="center/menu"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover = ExtResource("5_hover")
+text = "REINTENTAR"
+language = "es_MX"
+
+[node name="quit_button" type="Button" parent="center/menu"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover = ExtResource("5_hover")
+text = "SALIR"
+language = "es_MX"
+
+[connection signal="pressed" from="center/menu/resume_button" to="." method="_on_resume_button_pressed"]
+[connection signal="pressed" from="center/menu/retry_button" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="center/menu/quit_button" to="." method="_on_quit_button_pressed"]

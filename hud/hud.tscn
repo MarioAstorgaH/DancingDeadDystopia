@@ -11,11 +11,22 @@
 [ext_resource type="Texture2D" uid="uid://6amwul4vjcrw" path="res://Assets/Images/Buttons/brain_button_yellow_pressed.png" id="9_yellow_pressed"]
 [ext_resource type="Texture2D" uid="uid://bqtmhalx7rt8v" path="res://Assets/Images/Buttons/brain_button_blue.png" id="10_blue"]
 [ext_resource type="Texture2D" uid="uid://0xa14g1wprhc" path="res://Assets/Images/Buttons/brain_button_blue_pressed.png" id="11_blue_pressed"]
+[ext_resource type="Script" uid="uid://bnl60fsq8k0hv" path="res://hud/pause_button.gd" id="12_pause_button"]
+[ext_resource type="PackedScene" path="res://hud/pause_menu.tscn" id="13_pause_menu"]
+[ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="14_normal"]
+[ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="15_press"]
+[ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="16_hover"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_countdown"]
 font = ExtResource("3_font")
 font_size = 300
 outline_size = 24
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_combo"]
+font = ExtResource("3_font")
+font_size = 110
+outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
 [node name="HUD" type="CanvasLayer"]
@@ -82,6 +93,46 @@ label_settings = SubResource("LabelSettings_countdown")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="combo" type="VBoxContainer" parent="hud_root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 40.0
+offset_top = 100.0
+offset_right = 440.0
+offset_bottom = 250.0
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="combo_value" type="Label" parent="hud_root/combo"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+text = "X0"
+label_settings = SubResource("LabelSettings_combo")
+vertical_alignment = 2
+
+[node name="pause_button" type="Button" parent="hud_root"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -170.0
+offset_top = 40.0
+offset_right = -40.0
+offset_bottom = 170.0
+grow_horizontal = 0
+focus_mode = 0
+theme_override_styles/normal = ExtResource("14_normal")
+theme_override_styles/pressed = ExtResource("15_press")
+theme_override_styles/hover = ExtResource("16_hover")
+script = ExtResource("12_pause_button")
+
+[node name="pause_menu" parent="hud_root" instance=ExtResource("13_pause_menu")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
 [connection signal="pressed" from="hud_root/lanes/lane_green" to="." method="_on_lane_pressed"]
 [connection signal="released" from="hud_root/lanes/lane_green" to="." method="_on_lane_released"]
 [connection signal="pressed" from="hud_root/lanes/lane_red" to="." method="_on_lane_pressed"]
@@ -90,3 +141,7 @@ vertical_alignment = 1
 [connection signal="released" from="hud_root/lanes/lane_yellow" to="." method="_on_lane_released"]
 [connection signal="pressed" from="hud_root/lanes/lane_blue" to="." method="_on_lane_pressed"]
 [connection signal="released" from="hud_root/lanes/lane_blue" to="." method="_on_lane_released"]
+[connection signal="pressed" from="hud_root/pause_button" to="." method="_on_pause_button_pressed"]
+[connection signal="resumed" from="hud_root/pause_menu" to="." method="_on_pause_menu_resumed"]
+[connection signal="retried" from="hud_root/pause_menu" to="." method="_on_pause_menu_retried"]
+[connection signal="quit" from="hud_root/pause_menu" to="." method="_on_pause_menu_quit"]

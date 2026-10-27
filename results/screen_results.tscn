@@ -1,0 +1,219 @@
+[gd_scene format=3]
+
+[ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="1_font"]
+[ext_resource type="Script" uid="uid://b4xbchh4sd2od" path="res://results/results_screen.gd" id="2_results"]
+[ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="3_normal"]
+[ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="4_press"]
+[ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="5_hover"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("1_font")
+font_size = 50
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_song"]
+font = ExtResource("1_font")
+font_size = 45
+
+[sub_resource type="LabelSettings" id="LabelSettings_small"]
+font = ExtResource("1_font")
+font_size = 30
+font_color = Color(0.85, 0.85, 0.85, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_rank"]
+font = ExtResource("1_font")
+font_size = 260
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_stat"]
+font = ExtResource("1_font")
+font_size = 42
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="background" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.14, 0.06, 0.22, 1)
+
+[node name="results_margin" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 80
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 80
+theme_override_constants/margin_bottom = 40
+
+[node name="results_container" type="VBoxContainer" parent="Control/results_margin"]
+layout_mode = 2
+theme_override_constants/separation = 30
+script = ExtResource("2_results")
+
+[node name="Title" type="Label" parent="Control/results_margin/results_container"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+text = "RESULTADOS"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="song_title" type="Label" parent="Control/results_margin/results_container"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+text = "CANCION"
+label_settings = SubResource("LabelSettings_song")
+horizontal_alignment = 1
+vertical_alignment = 2
+autowrap_mode = 2
+
+[node name="song_artist" type="Label" parent="Control/results_margin/results_container"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = ""
+label_settings = SubResource("LabelSettings_small")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="rank" type="Label" parent="Control/results_margin/results_container"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 520)
+layout_mode = 2
+text = "-"
+label_settings = SubResource("LabelSettings_rank")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="stats" type="GridContainer" parent="Control/results_margin/results_container"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 30
+columns = 2
+
+[node name="hits_label" type="Label" parent="Control/results_margin/results_container/stats"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ACIERTOS"
+label_settings = SubResource("LabelSettings_stat")
+vertical_alignment = 2
+
+[node name="hits_value" type="Label" parent="Control/results_margin/results_container/stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_stat")
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="misses_label" type="Label" parent="Control/results_margin/results_container/stats"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "FALLOS"
+label_settings = SubResource("LabelSettings_stat")
+vertical_alignment = 2
+
+[node name="misses_value" type="Label" parent="Control/results_margin/results_container/stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_stat")
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="accuracy_label" type="Label" parent="Control/results_margin/results_container/stats"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PRECISION"
+label_settings = SubResource("LabelSettings_stat")
+vertical_alignment = 2
+
+[node name="accuracy_value" type="Label" parent="Control/results_margin/results_container/stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_stat")
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="max_combo_label" type="Label" parent="Control/results_margin/results_container/stats"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "COMBO MAXIMO"
+label_settings = SubResource("LabelSettings_stat")
+vertical_alignment = 2
+
+[node name="max_combo_value" type="Label" parent="Control/results_margin/results_container/stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_stat")
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="spacer" type="Control" parent="Control/results_margin/results_container"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="bottom_bar" type="HBoxContainer" parent="Control/results_margin/results_container"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="songs_button" type="Button" parent="Control/results_margin/results_container/bottom_bar"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover = ExtResource("5_hover")
+text = "CANCIONES"
+language = "es_MX"
+
+[node name="retry_button" type="Button" parent="Control/results_margin/results_container/bottom_bar"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("3_normal")
+theme_override_styles/pressed = ExtResource("4_press")
+theme_override_styles/hover = ExtResource("5_hover")
+text = "REINTENTAR"
+language = "es_MX"
+
+[connection signal="pressed" from="Control/results_margin/results_container/bottom_bar/songs_button" to="Control/results_margin/results_container" method="_on_songs_button_pressed"]
+[connection signal="pressed" from="Control/results_margin/results_container/bottom_bar/retry_button" to="Control/results_margin/results_container" method="_on_retry_button_pressed"]
