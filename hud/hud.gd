@@ -16,7 +16,7 @@ signal lane_released(lane: ChartMapper.Lane)
 
 
 func add_note(note: LaneNote) -> void:
-	_lanes[note.note.lane].add_note(note)
+	_lanes[note.lane()].add_note(note)
 
 
 ## Los carriles empiezan apagados; se encienden mientras corre el chart.
