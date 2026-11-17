@@ -6,7 +6,8 @@ extends RefCounted
 
 const DEFAULT_TEMPO := 500000  # microsegundos por negra (120 BPM)
 
-## Notas ordenadas por tiempo: {time, length, pitch}, en segundos.
+## Notas ordenadas por tiempo: {time, length, pitch, channel}, en segundos. `channel` va
+## de 0 a 15 (en los DAW se ve como 1 a 16).
 var notes: Array[Dictionary] = []
 
 var _ticks_per_quarter := 480
@@ -102,7 +103,12 @@ func _parse(bytes: PackedByteArray) -> String:
 
 	for note in raw_notes:
 		var start := _tick_to_time(note.tick)
-		notes.append({"time": start, "length": _tick_to_time(note.end_tick) - start, "pitch": note.pitch})
+		notes.append({
+			"time": start,
+			"length": _tick_to_time(note.end_tick) - start,
+			"pitch": note.pitch,
+			"channel": note.channel,
+		})
 	notes.sort_custom(func(a, b): return a.time < b.time or (a.time == b.time and a.pitch < b.pitch))
 	return ""
 
@@ -145,7 +151,7 @@ func _parse_track(end: int, raw_tempos: Array[Dictionary], raw_signatures: Array
 		var key := (running_status & 0x0F) * 128 + _read_u8()
 		var velocity := _read_u8()
 		if kind == 0x90 and velocity > 0:
-			raw_notes.append({"tick": tick, "end_tick": -1, "pitch": key % 128})
+			raw_notes.append({"tick": tick, "end_tick": -1, "pitch": key % 128, "channel": running_status & 0x0F})
 			open_notes.get_or_add(key, []).append(raw_notes.size() - 1)
 		elif (kind == 0x80 or kind == 0x90) and not open_notes.get(key, []).is_empty():
 			raw_notes[open_notes[key].pop_front()].end_tick = tick

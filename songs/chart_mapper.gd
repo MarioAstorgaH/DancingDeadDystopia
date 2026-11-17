@@ -4,6 +4,8 @@ extends RefCounted
 ## Convierte las notas del lead (MIDI) en notas del juego con carril.
 ## Más aguda = más a la derecha. Cada frase se normaliza por separado para
 ## conservar la forma de la melodía y usar los 4 carriles en todas las secciones.
+## Las notas en los canales de CHANNEL_TYPES son hostiles o fantasma (ver Chart.NoteType):
+## no son parte de la melodía y van en un carril donde no estorben (ver _place_traps).
 
 enum Lane { GREEN, RED, YELLOW, BLUE }
 
@@ -20,18 +22,58 @@ const GRID_TOLERANCE := 0.04  # tiempos que una nota puede desviarse de la rejil
 ## Tiempos mínimos entre dos notas para que cambien de carril: más juntas se sentirían
 ## como dos notas a la vez en carriles distintos.
 const LANE_CHANGE_BEATS := 0.5
-const MAX_FIGURE_HITS := 4  # una figura no pasa de 4 golpes (4 semicorcheas en un tiempo)
+## Una nota nunca pide más de 2 golpes: las figuras más largas (tresillo, 4 semicorcheas)
+## se parten en notas de 2 golpes o menos.
+const MAX_FIGURE_HITS := 2
+## Después de una nota de varios golpes, la siguiente que empiece a menos de esto (en tiempos)
+## va en otro carril, para no repetir el mismo botón.
+const SPREAD_BEATS := 1.0
+## Canal MIDI (contando desde 1, como en los DAW) de cada tipo de nota especial; las de los
+## demás canales son normales.
+const CHANNEL_TYPES := {2: Chart.NoteType.HOSTILE, 3: Chart.NoteType.GHOST}
+## Una nota sencilla que suena al menos HOLD_MIN_BEATS tiempos es una nota sostenida.
+const HOLD_MIN_BEATS := 1.0
+## Una nota sostenida se suelta al menos HOLD_GAP_BEATS antes de la siguiente nota, para
+## que no haya que tocar otra mientras se sostiene.
+const HOLD_GAP_BEATS := 0.5
+const HOLD_STEP := 0.25  # la duración de una nota sostenida se redondea a semicorcheas
 
 
-## Devuelve las notas {time, length, pitch, lane, beat, subdivision, group} ordenadas por
-## tiempo. `group` y `subdivision` dicen a qué figura pertenece la nota (ver _assign_figures).
+## Devuelve las notas {time, length, pitch, lane, beat, subdivision, group, hold, type}
+## ordenadas por tiempo. `group` y `subdivision` dicen a qué figura pertenece la nota (ver
+## _assign_figures), `hold` cuántos tiempos se sostiene (0 si es un toque, ver _assign_holds)
+## y `type` es un Chart.NoteType.
 static func map(midi: MidiFile) -> Array[Dictionary]:
-	var chart: Array[Dictionary] = []
-	for phrase in _split_phrases(_merge_chords(midi.notes), midi):
-		_assign_lanes(phrase)
-		chart.append_array(phrase)
-	_assign_figures(chart, midi.tempo_map())
+	var melody: Array[Dictionary] = []
+	var traps: Array[Dictionary] = []
+	for midi_note in midi.notes:
+		var note := midi_note.duplicate()
+		note.type = CHANNEL_TYPES.get(note.channel + 1, Chart.NoteType.NORMAL)
+		note.erase("channel")
+		if note.type == Chart.NoteType.NORMAL:
+			melody.append(note)
+		else:
+			traps.append(note)
+	var tempo := midi.tempo_map()
+	var chart := _lanes_by_phrase(_merge_chords(melody), midi)
+	_assign_figures(chart, tempo)
+	_assign_holds(chart, tempo)
+	# Las trampas no se juntan en acordes: dos hostiles a la vez tapan dos carriles.
+	chart.append_array(_place_traps(_lanes_by_phrase(traps, midi), chart, tempo))
+	chart.sort_custom(func(a, b): return a.time < b.time or (a.time == b.time and a.lane < b.lane))
+	# Numera las notas en orden de aparición.
+	var ids := {}
+	for note in chart:
+		note.group = ids.get_or_add(note.group, ids.size())
 	return chart
+
+
+static func _lanes_by_phrase(notes: Array[Dictionary], midi: MidiFile) -> Array[Dictionary]:
+	var mapped: Array[Dictionary] = []
+	for phrase in _split_phrases(notes, midi):
+		_assign_lanes(phrase)
+		mapped.append_array(phrase)
+	return mapped
 
 
 ## De cada acorde se queda la nota más aguda, que normalmente lleva la melodía.
@@ -103,19 +145,15 @@ static func _keep_direction(previous: Dictionary, pitch: int, lane: int) -> int:
 
 
 ## Agrupa las notas como se escriben en la partitura: las corcheas, el tresillo o las
-## semicorcheas de un mismo tiempo forman una figura, que en el juego es una sola nota de
-## varios golpes (`subdivision` 2, 3 o 4). Una nota sola en su tiempo (negra, blanca o una
-## corchea suelta) es una nota sencilla (`subdivision` 1). Las notas de una figura
-## comparten `group` y carril.
-## Una figura que empieza a menos de LANE_CHANGE_BEATS de la nota anterior se queda en el
-## carril de esa nota, así nunca hay dos notas casi a la vez en carriles distintos.
+## semicorcheas de un mismo tiempo forman una figura, que en el juego es una nota de
+## varios golpes (`subdivision` 2, 3 o 4). Una figura de más de MAX_FIGURE_HITS se parte en
+## varias notas. Una nota sola en su tiempo (negra, blanca o una corchea suelta) es una nota
+## sencilla (`subdivision` 1). Los golpes de una nota comparten `group` y carril.
+## Una nota que empieza a menos de LANE_CHANGE_BEATS de la anterior se queda en su carril,
+## así nunca hay dos notas casi a la vez en carriles distintos. Pero después de una nota de
+## varios golpes (o antes de una muy pegada) la siguiente cambia de carril (_other_lane).
 static func _assign_figures(chart: Array[Dictionary], tempo: TempoMap) -> void:
-	for note in chart:
-		note.beat = tempo.beat_at(note.time)
-		for figure in FIGURES:
-			if _on_grid(note.beat, figure):
-				note.beat = roundf(note.beat * figure) / figure
-				break
+	_snap_beats(chart, tempo)
 
 	var groups: Array[Array] = []
 	var start := 0
@@ -125,7 +163,8 @@ static func _assign_figures(chart: Array[Dictionary], tempo: TempoMap) -> void:
 			end += 1
 		var notes := chart.slice(start, end)
 		if notes.size() >= 2 and _figure_of(notes) > 0:
-			groups.append(notes)
+			for i in range(0, notes.size(), MAX_FIGURE_HITS):
+				groups.append(notes.slice(i, i + MAX_FIGURE_HITS))
 		else:
 			for note in notes:
 				groups.append([note])
@@ -147,12 +186,86 @@ static func _assign_figures(chart: Array[Dictionary], tempo: TempoMap) -> void:
 		var group: Array = merged[i]
 		var figure := _figure_of(group) if group.size() > 1 else 1
 		var lane: int = group[0].lane
-		if i > 0 and group[0].beat - merged[i - 1][-1].beat < LANE_CHANGE_BEATS - GRID_TOLERANCE:
-			lane = merged[i - 1][-1].lane
+		if i > 0:
+			var previous: Dictionary = merged[i - 1][-1]
+			var gap: float = group[0].beat - previous.beat
+			var close := gap < LANE_CHANGE_BEATS - GRID_TOLERANCE
+			if (merged[i - 1].size() > 1 and gap < SPREAD_BEATS - GRID_TOLERANCE) \
+					or (close and group.size() > 1):
+				lane = _other_lane(previous.lane, lane, signi(group[0].pitch - previous.pitch))
+			elif close:
+				lane = previous.lane
 		for note in group:
 			note.subdivision = figure
 			note.lane = lane
 			note.group = i
+
+
+## Las notas sencillas largas se sostienen: `hold` es cuántos tiempos (en semicorcheas
+## enteras) hay que dejar el dedo después de tocarla. Se cortan HOLD_GAP_BEATS antes de la
+## siguiente nota; si así quedan más cortas que HOLD_MIN_BEATS son un toque normal (0).
+static func _assign_holds(chart: Array[Dictionary], tempo: TempoMap) -> void:
+	for i in chart.size():
+		var note: Dictionary = chart[i]
+		note.hold = 0.0
+		if note.subdivision != 1:
+			continue
+		var end := tempo.beat_at(note.time + note.length)
+		if i + 1 < chart.size():
+			end = minf(end, chart[i + 1].beat - HOLD_GAP_BEATS)
+		var hold := floorf((end - note.beat) / HOLD_STEP + GRID_TOLERANCE) * HOLD_STEP
+		if hold >= HOLD_MIN_BEATS:
+			note.hold = hold
+
+
+## `lane` si es distinto de `previous`; si no, el carril de al lado hacia donde va la melodía
+## (`direction`), o hacia el centro si repite nota o ya está en la orilla.
+static func _other_lane(previous: int, lane: int, direction: int) -> int:
+	if lane != previous:
+		return lane
+	if direction == 0:
+		direction = 1 if previous < LANE_COUNT / 2.0 else -1
+	if previous + direction < 0 or previous + direction >= LANE_COUNT:
+		direction = -direction
+	return previous + direction
+
+
+## Las notas hostiles y fantasma no se tocan: cada una va en el carril de su altura, pero si
+## ahí cae a menos de LANE_CHANGE_BEATS de otra nota (o encima de una sostenida) se pasa al
+## carril libre más cercano. Si no queda ninguno libre se descarta.
+static func _place_traps(traps: Array[Dictionary], chart: Array[Dictionary], tempo: TempoMap) -> Array[Dictionary]:
+	_snap_beats(traps, tempo)
+	var placed: Array[Dictionary] = []
+	for trap in traps:
+		trap.subdivision = 1
+		trap.hold = 0.0
+		trap.group = -1 - placed.size()  # map() los vuelve a numerar
+		var lanes := range(LANE_COUNT)
+		lanes.sort_custom(func(a, b): return absi(a - trap.lane) < absi(b - trap.lane))
+		for lane in lanes:
+			if not _lane_busy(lane, trap.beat, chart) and not _lane_busy(lane, trap.beat, placed):
+				trap.lane = lane
+				placed.append(trap)
+				break
+	return placed
+
+
+static func _lane_busy(lane: int, beat: float, notes: Array[Dictionary]) -> bool:
+	for note in notes:
+		if note.lane == lane and beat > note.beat - LANE_CHANGE_BEATS \
+				and beat < note.beat + note.hold + LANE_CHANGE_BEATS:
+			return true
+	return false
+
+
+## Pasa cada nota a tiempos (`beat`), ajustada a la rejilla más gruesa en la que cae.
+static func _snap_beats(notes: Array[Dictionary], tempo: TempoMap) -> void:
+	for note in notes:
+		note.beat = tempo.beat_at(note.time)
+		for figure in FIGURES:
+			if _on_grid(note.beat, figure):
+				note.beat = roundf(note.beat * figure) / figure
+				break
 
 
 ## La figura más larga en cuya rejilla caen todas las notas, o 0 si no hay ninguna

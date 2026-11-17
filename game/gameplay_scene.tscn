@@ -4,6 +4,13 @@
 [ext_resource type="PackedScene" path="res://hud/hud.tscn" id="1_hud"]
 [ext_resource type="Script" uid="uid://riiot74xfp8k" path="res://game/song_player.gd" id="2_player"]
 [ext_resource type="AudioStream" uid="uid://bt1enu0p5kpfk" path="res://Assets/Audio/audio perron/cuenta_regresiva.wav" id="3_countdown"]
+[ext_resource type="Script" uid="uid://bhhh282p0hcms" path="res://game/dancer.gd" id="4_dancer"]
+[ext_resource type="Texture2D" uid="uid://dh0av78mdfm51" path="res://Assets/Images/Zombie/zombie_frame_1.png" id="5_idle"]
+[ext_resource type="Texture2D" uid="uid://jijcvw6osvql" path="res://Assets/Images/Zombie/zombie_frame_6.png" id="6_left"]
+[ext_resource type="Texture2D" uid="uid://3mg1av8nygds" path="res://Assets/Images/Zombie/zombie_frame_4.png" id="7_red"]
+[ext_resource type="Texture2D" uid="uid://baxw5s8c2g1rj" path="res://Assets/Images/Zombie/zombie_frame_2.png" id="8_yellow_placeholder"]
+[ext_resource type="Texture2D" uid="uid://cbhf0np1sa7sq" path="res://Assets/Images/Zombie/zombie_frame_5.png" id="9_right"]
+[ext_resource type="Script" uid="uid://c2pdfcen1dfnf" path="res://game/health.gd" id="10_health"]
 
 [node name="Gameplay" type="Node2D" unique_id=1465382250]
 script = ExtResource("1_gameplay")
@@ -20,6 +27,22 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.14, 0.06, 0.22, 1)
 
+[node name="Dancer" type="TextureRect" parent="Background"]
+modulate = Color(1, 1, 1, 0.7)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 260.0
+offset_bottom = -400.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("4_dancer")
+idle = ExtResource("5_idle")
+poses = Array[Texture2D]([ExtResource("6_left"), ExtResource("7_red"), ExtResource("8_yellow_placeholder"), ExtResource("9_right")])
+
 [node name="SongPlayer" type="AudioStreamPlayer" parent="."]
 bus = &"GameMusic"
 script = ExtResource("2_player")
@@ -30,9 +53,14 @@ bus = &"Effects"
 
 [node name="HUD" parent="." instance=ExtResource("1_hud")]
 
+[node name="Health" type="Node" parent="."]
+script = ExtResource("10_health")
+
 [connection signal="lane_pressed" from="HUD" to="." method="_on_hud_lane_pressed"]
 [connection signal="pause_requested" from="HUD" to="." method="_on_hud_pause_requested"]
 [connection signal="resume_requested" from="HUD" to="." method="_on_hud_resume_requested"]
 [connection signal="retry_requested" from="HUD" to="." method="_on_hud_retry_requested"]
 [connection signal="quit_requested" from="HUD" to="." method="_on_hud_quit_requested"]
 [connection signal="finished" from="SongPlayer" to="." method="_on_song_player_finished"]
+[connection signal="changed" from="Health" to="HUD" method="show_health"]
+[connection signal="died" from="Health" to="." method="_on_health_died"]

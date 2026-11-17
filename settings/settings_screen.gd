@@ -1,6 +1,7 @@
 extends VBoxContainer
 
 const MAIN_MENU_SCENE := "res://menu/screen_main_menu.tscn"
+const CALIBRATION_SCENE := "res://settings/screen_calibration.tscn"
 
 
 func _notification(what: int) -> void:
@@ -12,3 +13,8 @@ func _notification(what: int) -> void:
 func _on_back_button_pressed() -> void:
 	AudioSettings.save()
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
+
+
+func _on_calibrate_button_pressed() -> void:
+	AudioSettings.save()
+	get_tree().change_scene_to_file(CALIBRATION_SCENE)

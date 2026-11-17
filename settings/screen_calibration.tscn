@@ -1,0 +1,195 @@
+[gd_scene format=3]
+
+[ext_resource type="FontFile" uid="uid://8cwrl5m3m2mr" path="res://Assets/Fonts/ghost_shadow/Ghost Shadow.ttf" id="1_font"]
+[ext_resource type="Script" uid="uid://dcb428y03ckth" path="res://settings/calibration_screen.gd" id="2_calibration"]
+[ext_resource type="Script" uid="uid://riiot74xfp8k" path="res://game/song_player.gd" id="3_player"]
+[ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="4_normal"]
+[ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="5_press"]
+[ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="6_hover"]
+[ext_resource type="Texture2D" uid="uid://bmpov3ihb4mng" path="res://Assets/Images/Buttons/brain_button_green.png" id="7_brain"]
+[ext_resource type="Texture2D" uid="uid://bth5qfgmobjmo" path="res://Assets/Images/Buttons/brain_button_green_pressed.png" id="8_brain_pressed"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("1_font")
+font_size = 50
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_section"]
+font = ExtResource("1_font")
+font_size = 45
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_row"]
+font = ExtResource("1_font")
+font_size = 36
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_track"]
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.3, 0.18, 0.42, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.45, 0.75, 0.3, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="Gradient" id="Gradient_grabber"]
+offsets = PackedFloat32Array(0, 0.76, 0.8, 0.93, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0.3, 0.6, 0.22, 1, 0.3, 0.6, 0.22, 1, 0.3, 0.6, 0.22, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_grabber"]
+gradient = SubResource("Gradient_grabber")
+width = 84
+height = 84
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="Gradient" id="Gradient_grabber_hl"]
+offsets = PackedFloat32Array(0, 0.76, 0.8, 0.93, 1)
+colors = PackedColorArray(0.85, 1, 0.8, 1, 0.85, 1, 0.8, 1, 0.3, 0.6, 0.22, 1, 0.3, 0.6, 0.22, 1, 0.3, 0.6, 0.22, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_grabber_hl"]
+gradient = SubResource("Gradient_grabber_hl")
+width = 84
+height = 84
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="background" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.14, 0.06, 0.22, 1)
+
+[node name="calibration_margin" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="calibration_container" type="VBoxContainer" parent="Control/calibration_margin"]
+layout_mode = 2
+theme_override_constants/separation = 50
+script = ExtResource("2_calibration")
+
+[node name="Title" type="Label" parent="Control/calibration_margin/calibration_container"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+text = "AJUSTE DE RITMO"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="hint_label" type="Label" parent="Control/calibration_margin/calibration_container"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+text = "TOCA EL CEREBRO CADA VEZ QUE ESCUCHES EL GOLPE"
+label_settings = SubResource("LabelSettings_row")
+horizontal_alignment = 1
+vertical_alignment = 2
+autowrap_mode = 2
+
+[node name="tap_button" type="TextureButton" parent="Control/calibration_margin/calibration_container"]
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+texture_normal = ExtResource("7_brain")
+texture_pressed = ExtResource("8_brain_pressed")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="status_label" type="Label" parent="Control/calibration_margin/calibration_container"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "TOQUES 0 / 4"
+label_settings = SubResource("LabelSettings_row")
+horizontal_alignment = 1
+
+[node name="latency_row" type="VBoxContainer" parent="Control/calibration_margin/calibration_container"]
+layout_mode = 2
+
+[node name="name_label" type="Label" parent="Control/calibration_margin/calibration_container/latency_row"]
+layout_mode = 2
+text = "LATENCIA"
+label_settings = SubResource("LabelSettings_row")
+
+[node name="controls" type="HBoxContainer" parent="Control/calibration_margin/calibration_container/latency_row"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="latency_slider" type="HSlider" parent="Control/calibration_margin/calibration_container/latency_row/controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxFlat_track")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_fill")
+theme_override_icons/grabber = SubResource("GradientTexture2D_grabber")
+theme_override_icons/grabber_highlight = SubResource("GradientTexture2D_grabber_hl")
+min_value = -100.0
+max_value = 400.0
+step = 5.0
+
+[node name="latency_value" type="Label" parent="Control/calibration_margin/calibration_container/latency_row/controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "0 MS"
+label_settings = SubResource("LabelSettings_row")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="back_button" type="Button" parent="Control/calibration_margin/calibration_container"]
+custom_minimum_size = Vector2(400, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("4_normal")
+theme_override_styles/pressed = ExtResource("5_press")
+theme_override_styles/hover = ExtResource("6_hover")
+text = "VOLVER"
+language = "es_MX"
+
+[node name="calibration_player" type="AudioStreamPlayer" parent="Control/calibration_margin/calibration_container"]
+unique_name_in_owner = true
+bus = &"GameMusic"
+script = ExtResource("3_player")
+
+[connection signal="button_down" from="Control/calibration_margin/calibration_container/tap_button" to="Control/calibration_margin/calibration_container" method="_on_tap_button_down"]
+[connection signal="value_changed" from="Control/calibration_margin/calibration_container/latency_row/controls/latency_slider" to="Control/calibration_margin/calibration_container" method="_on_latency_slider_value_changed"]
+[connection signal="finished" from="Control/calibration_margin/calibration_container/calibration_player" to="Control/calibration_margin/calibration_container" method="_on_calibration_player_finished"]
+[connection signal="pressed" from="Control/calibration_margin/calibration_container/back_button" to="Control/calibration_margin/calibration_container" method="_on_back_button_pressed"]
