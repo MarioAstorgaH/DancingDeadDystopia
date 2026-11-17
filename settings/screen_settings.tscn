@@ -262,6 +262,18 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="calibrate_button" type="Button" parent="Control/settings_margin/settings_container"]
+custom_minimum_size = Vector2(600, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("4_normal")
+theme_override_styles/pressed = ExtResource("5_press")
+theme_override_styles/hover = ExtResource("6_hover")
+text = "AJUSTAR RITMO"
+language = "es_MX"
+
 [node name="back_button" type="Button" parent="Control/settings_margin/settings_container"]
 custom_minimum_size = Vector2(400, 120)
 layout_mode = 2
@@ -278,4 +290,5 @@ language = "es_MX"
 [connection signal="value_changed" from="Control/settings_margin/settings_container/menu_music_row/controls/slider" to="Control/settings_margin/settings_container/menu_music_row" method="_on_slider_value_changed"]
 [connection signal="value_changed" from="Control/settings_margin/settings_container/game_music_row/controls/slider" to="Control/settings_margin/settings_container/game_music_row" method="_on_slider_value_changed"]
 [connection signal="value_changed" from="Control/settings_margin/settings_container/effects_row/controls/slider" to="Control/settings_margin/settings_container/effects_row" method="_on_slider_value_changed"]
+[connection signal="pressed" from="Control/settings_margin/settings_container/calibrate_button" to="Control/settings_margin/settings_container" method="_on_calibrate_button_pressed"]
 [connection signal="pressed" from="Control/settings_margin/settings_container/back_button" to="Control/settings_margin/settings_container" method="_on_back_button_pressed"]

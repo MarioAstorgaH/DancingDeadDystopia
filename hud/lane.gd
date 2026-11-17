@@ -3,6 +3,7 @@ extends Control
 
 ## Un carril del HUD: la franja de color y su botón de cerebro abajo.
 ## El botón se escala al ancho del carril, así que funciona con cualquier tamaño de pantalla.
+## En la PC también se toca con una tecla (`key`), para probar sin pantalla táctil.
 
 signal pressed(lane: ChartMapper.Lane)
 signal released(lane: ChartMapper.Lane)
@@ -22,19 +23,24 @@ const ENABLE_FADE := 0.25  # segundos
 @export var color := Color.WHITE
 @export var texture_normal: Texture2D
 @export var texture_pressed: Texture2D
+@export var key := KEY_NONE  # tecla física que hace lo mismo que tocar el botón
 
 @onready var _strip: ColorRect = $strip
 @onready var _button: TouchScreenButton = $button
 @onready var _notes: Node2D = $notes
 
 var _fade: Tween
+var _enabled := false
+var _key_down := false
 
 
 ## Encendido, el carril se ve normal y responde al toque. Apagado (como empieza) se ve
 ## gris y el botón no responde; las notas no se apagan, para que se vean llegar.
 func set_enabled(enabled: bool) -> void:
+	_enabled = enabled
 	_button.process_mode = Node.PROCESS_MODE_INHERIT if enabled else Node.PROCESS_MODE_DISABLED
 	if not enabled:
+		_set_key_down(false)
 		_set_strip_alpha(STRIP_ALPHA)
 	var target := Color.WHITE if enabled else DISABLED_MODULATE
 	if _fade:
@@ -59,6 +65,36 @@ func _ready() -> void:
 	_button.modulate = DISABLED_MODULATE
 	_strip.modulate = DISABLED_MODULATE
 	_layout()
+
+
+## Si el dedo (o la tecla) sigue sobre el botón (para las notas sostenidas).
+func is_pressed() -> bool:
+	return _button.is_pressed() or _key_down
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	var key_event := event as InputEventKey
+	if _enabled and key_event.physical_keycode == key and not key_event.echo:
+		_set_key_down(key_event.pressed)
+		get_viewport().set_input_as_handled()
+
+
+func _notification(what: int) -> void:
+	# En pausa no llega el evento de soltar la tecla; se suelta al pausar, como el botón.
+	if what == NOTIFICATION_PAUSED:
+		_set_key_down(false)
+
+
+## La tecla se ve y se comporta como tocar el botón.
+func _set_key_down(down: bool) -> void:
+	if down == _key_down:
+		return
+	_key_down = down
+	_button.texture_normal = texture_pressed if down else texture_normal
+	if down:
+		_on_button_pressed()
+	elif not _button.is_pressed():
+		_on_button_released()
 
 
 ## Altura (en coordenadas del carril) del centro del cerebro: ahí deben llegar las notas.

@@ -3,6 +3,8 @@ extends AudioStreamPlayer
 
 ## Toca la canción: el fondo (`audio`) y la melodía original (`lead`) juntos y
 ## sincronizados. Cuando el jugador falla se baja la melodía hasta que vuelva a atinar.
+## El reloj compensa la latencia que reporta Godot más el ajuste del jugador
+## (AudioSettings.latency_ms): en Android Godot casi no la reporta y el sonido sale tarde.
 
 const MUTED_DB := -60.0
 const FADE := 0.08  # segundos
@@ -17,6 +19,9 @@ var _fade: Tween
 var _origin_usec := 0  # Time.get_ticks_usec() en el que la canción está en 0
 var _waiting := false  # hay una canción esperando a que termine la cuenta regresiva
 var _paused_usec := -1  # cuándo se pausó el juego; -1 si no está en pausa
+## Falso para no usar el ajuste de latencia del jugador: la pantalla de calibración mide
+## el desfase completo con el reloj sin ajustar.
+var use_calibration := true
 
 
 func _init() -> void:
@@ -25,19 +30,30 @@ func _init() -> void:
 
 ## Empieza la canción después de `lead_in` segundos de espera.
 func play_song(song: SongInfo, lead_in := 0.0) -> void:
+	play_streams(load(song.audio_path), load(song.lead_path) if song.lead_path else null, lead_in)
+
+
+## Como play_song() pero con el audio ya cargado; `lead` es opcional.
+func play_streams(audio: AudioStream, lead: AudioStream = null, lead_in := 0.0) -> void:
 	_sync = AudioStreamSynchronized.new()
-	_sync.stream_count = 2 if song.lead_path else 1
-	_sync.set_sync_stream(0, load(song.audio_path))
-	if song.lead_path:
-		_sync.set_sync_stream(1, load(song.lead_path))
+	_sync.stream_count = 2 if lead else 1
+	_sync.set_sync_stream(0, audio)
+	if lead:
+		_sync.set_sync_stream(1, lead)
 	_lead_db = 0.0
 	stream = _sync
 	_origin_usec = Time.get_ticks_usec() + int(lead_in * 1_000_000.0)
 	_waiting = true
 
 
+## Segundos entre que se manda el audio y que se oye.
+func latency() -> float:
+	var extra := AudioSettings.latency_ms / 1000.0 if use_calibration else 0.0
+	return AudioServer.get_output_latency() + extra
+
+
 func _process(_delta: float) -> void:
-	var latency := AudioServer.get_output_latency()
+	var latency := latency()
 	if _waiting and song_time() >= -latency:
 		# Arranca un poco antes para que el sonido salga justo en 0 de la canción.
 		_waiting = false

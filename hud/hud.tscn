@@ -16,6 +16,7 @@
 [ext_resource type="StyleBox" uid="uid://dluie0f6fckn6" path="res://Assets/configs/buttons/mainmenu_button.tres" id="14_normal"]
 [ext_resource type="StyleBox" uid="uid://bu403pbxebg4g" path="res://Assets/configs/buttons/mainmenu_button_press.tres" id="15_press"]
 [ext_resource type="StyleBox" uid="uid://bgblbw5aq1pju" path="res://Assets/configs/buttons/mainmenu_button_hover.tres" id="16_hover"]
+[ext_resource type="Script" uid="uid://d2fy71eun0q4r" path="res://hud/health_bar.gd" id="17_health_bar"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_countdown"]
 font = ExtResource("3_font")
@@ -26,6 +27,12 @@ outline_color = Color(0, 0, 0, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_combo"]
 font = ExtResource("3_font")
 font_size = 110
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_judgement"]
+font = ExtResource("3_font")
+font_size = 90
 outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
@@ -57,6 +64,7 @@ lane = 0
 color = Color(0.25, 0.85, 0.35, 1)
 texture_normal = ExtResource("4_green")
 texture_pressed = ExtResource("5_green_pressed")
+key = 68
 
 [node name="lane_red" parent="hud_root/lanes" instance=ExtResource("2_lane")]
 layout_mode = 2
@@ -64,6 +72,7 @@ lane = 1
 color = Color(0.95, 0.25, 0.25, 1)
 texture_normal = ExtResource("6_red")
 texture_pressed = ExtResource("7_red_pressed")
+key = 70
 
 [node name="lane_yellow" parent="hud_root/lanes" instance=ExtResource("2_lane")]
 layout_mode = 2
@@ -71,6 +80,7 @@ lane = 2
 color = Color(0.95, 0.8, 0.2, 1)
 texture_normal = ExtResource("8_yellow")
 texture_pressed = ExtResource("9_yellow_pressed")
+key = 74
 
 [node name="lane_blue" parent="hud_root/lanes" instance=ExtResource("2_lane")]
 layout_mode = 2
@@ -78,6 +88,7 @@ lane = 3
 color = Color(0.25, 0.5, 0.95, 1)
 texture_normal = ExtResource("10_blue")
 texture_pressed = ExtResource("11_blue_pressed")
+key = 75
 
 [node name="countdown_label" type="Label" parent="hud_root"]
 unique_name_in_owner = true
@@ -93,14 +104,31 @@ label_settings = SubResource("LabelSettings_countdown")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="judgement_label" type="Label" parent="hud_root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -620.0
+offset_bottom = -440.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "PERFECTO"
+label_settings = SubResource("LabelSettings_judgement")
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [node name="combo" type="VBoxContainer" parent="hud_root"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
 offset_left = 40.0
-offset_top = 100.0
+offset_top = 190.0
 offset_right = 440.0
-offset_bottom = 250.0
+offset_bottom = 340.0
 mouse_filter = 2
 theme_override_constants/separation = 0
 
@@ -111,6 +139,19 @@ layout_mode = 2
 text = "X0"
 label_settings = SubResource("LabelSettings_combo")
 vertical_alignment = 2
+
+[node name="health_bar" type="Control" parent="hud_root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 40.0
+offset_top = 70.0
+offset_right = -210.0
+offset_bottom = 120.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("17_health_bar")
 
 [node name="pause_button" type="Button" parent="hud_root"]
 layout_mode = 1
